@@ -1,110 +1,118 @@
-import * as fs from 'node:fs';
-import * as path from 'node:path';
-import * as fg from 'fast-glob';
-import { LichessModule, env, colors as c } from './main';
+import fs from 'node:fs';
+import path from 'node:path';
+import fg from 'fast-glob';
+import { env, errorMark, c } from './env.ts';
 
-export const parseModules = async (): Promise<[Map<string, LichessModule>, Map<string, string[]>]> => {
-  const modules = new Map<string, LichessModule>();
-  const moduleDeps = new Map<string, string[]>();
+export type Bundle = { module?: string; inline?: string };
 
+export interface Package {
+  root: string; // absolute path to package.json parentdir (package root)
+  name: string; // dirname of package root
+  pkg: any; // the entire package.json object
+  bundle: { module?: string; inline?: string }[]; // TODO doc
+  hash: { glob: string; update?: string }[]; // TODO doc
+  sync: Sync[]; // pre-bundle filesystem copies from package json
+}
+
+export interface Sync {
+  src: string; // src must be a file or a glob expression, use <dir>/** to sync entire directories
+  dest: string; // TODO doc
+  pkg: Package;
+}
+
+export async function parsePackages(): Promise<void> {
   for (const dir of (await globArray('[^@.]*/package.json')).map(pkg => path.dirname(pkg))) {
-    const mod = await parseModule(dir);
-    modules.set(mod.name, mod);
+    const pkgInfo = await parsePackage(dir);
+    env.packages.set(pkgInfo.name, pkgInfo);
   }
 
-  for (const mod of modules.values()) {
+  for (const pkgInfo of env.packages.values()) {
     const deplist: string[] = [];
-    for (const dep in mod.pkg.dependencies) {
-      if (modules.has(dep)) deplist.push(dep);
+    for (const dep in pkgInfo.pkg.dependencies) {
+      if (env.packages.has(dep)) deplist.push(dep);
     }
-    moduleDeps.set(mod.name, deplist);
-    // for package.jsons with multiple esm bundles, subsequent bundles depend on the first
-    mod.bundles?.esm?.slice(1).forEach(r => moduleDeps.set(r.output, [mod.name, ...deplist]));
+    env.workspaceDeps.set(pkgInfo.name, deplist);
   }
-  return [modules, moduleDeps];
-};
+}
 
-export async function globArray(
-  glob: string,
-  { cwd = env.uiDir, abs = true, dirs = false } = {},
-): Promise<string[]> {
+export async function globArray(glob: string, opts: fg.Options = {}): Promise<string[]> {
   const files: string[] = [];
-  for await (const f of fg.stream(glob, { cwd, absolute: abs, onlyFiles: !dirs }))
+  for await (const f of fg.stream(glob, { cwd: env.uiDir, absolute: true, onlyFiles: true, ...opts })) {
     files.push(f.toString('utf8'));
+  }
   return files;
 }
 
-async function parseModule(moduleDir: string): Promise<LichessModule> {
-  const pkg = JSON.parse(await fs.promises.readFile(path.join(moduleDir, 'package.json'), 'utf8'));
-  const mod: LichessModule = {
-    pkg: pkg,
-    name: path.basename(moduleDir),
-    root: moduleDir,
-    pre: [],
-    post: [],
-    hasTsconfig: fs.existsSync(path.join(moduleDir, 'tsconfig.json')),
-  };
-  parseScripts(mod, 'scripts' in pkg ? pkg.scripts : {});
+export async function globArrays(globs: string[] | undefined, opts: fg.Options = {}): Promise<string[]> {
+  if (!globs) return [];
+  const globResults = await Promise.all(globs.map(g => globArray(g, opts)));
+  return [...new Set<string>(globResults.flat())];
+}
 
-  if ('lichess' in pkg && 'modules' in pkg.lichess) {
-    for (const moduleType in pkg.lichess.modules) {
-      if (moduleType !== 'esm' && moduleType !== 'iife') {
-        env.log(
-          c.warn('WARNING') +
-            ` - Unsupported module type '${c.cyan(moduleType)}' in '${c.cyan(mod.name + '/package.json')}'`,
+export async function folderSize(folder: string): Promise<number> {
+  async function getSize(dir: string): Promise<number> {
+    const entries = await fs.promises.readdir(dir, { withFileTypes: true });
+
+    const sizes = await Promise.all(
+      entries.map(async entry => {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) return getSize(fullPath);
+        if (entry.isFile()) return (await fs.promises.stat(fullPath)).size;
+        return 0;
+      }),
+    );
+    return sizes.reduce((acc: number, size: number) => acc + size, 0);
+  }
+  return getSize(folder);
+}
+
+export async function readable(file: string): Promise<boolean> {
+  return fs.promises
+    .access(file, fs.constants.R_OK)
+    .then(() => true)
+    .catch(() => false);
+}
+
+async function parsePackage(packageDir: string): Promise<Package> {
+  const pkgInfo: Package = {
+    pkg: JSON.parse(await fs.promises.readFile(path.join(packageDir, 'package.json'), 'utf8')),
+    name: path.basename(packageDir),
+    root: packageDir,
+    bundle: [],
+    sync: [],
+    hash: [],
+  };
+  if (!('build' in pkgInfo.pkg)) return pkgInfo;
+  const build = pkgInfo.pkg.build;
+
+  if ('hash' in build)
+    pkgInfo.hash = [].concat(build.hash).map(glob => (typeof glob === 'string' ? { glob } : glob));
+
+  if ('bundle' in build) {
+    for (const one of [].concat(build.bundle).map<Bundle>(b => (typeof b === 'string' ? { module: b } : b))) {
+      const src = one.module ?? one.inline;
+      if (!src) continue;
+
+      if (await readable(path.join(pkgInfo.root, src))) pkgInfo.bundle.push(one);
+      else if (one.module)
+        pkgInfo.bundle.push(
+          ...(await globArray(one.module, { cwd: pkgInfo.root, absolute: false }))
+            .filter(m => !m.endsWith('.inline.ts')) // no globbed inline sources
+            .map(module => ({ ...one, module })),
         );
-        continue;
-      }
-      mod.bundles ??= {};
-      mod.bundles[moduleType] = Object.entries(pkg.lichess.modules[moduleType]).map(x => ({
-        input: x[0],
-        output: x[1] as string,
-      }));
+      else env.log(`[${c.grey(pkgInfo.name)}] - ${errorMark} - Bundle error ${c.blue(JSON.stringify(one))}`);
     }
   }
-  if ('lichess' in pkg && 'copy' in pkg.lichess) {
-    const copy: any[] = Array.isArray(pkg.lichess.copy) ? pkg.lichess.copy : [pkg.lichess.copy];
-    const flattener = new Map<string, Set<string>>();
-    for (const s of copy) {
-      if (!Array.isArray(s.src)) s.src = [s.src];
-      for (const src of s.src) {
-        const srcDest = flattener.get(src) ?? new Set<string>();
-        srcDest.add(s.dest);
-        flattener.set(src, srcDest);
-      }
-    }
-    mod.copy = [];
-    for (const [src, dests] of flattener.entries())
-      for (const dest of dests) mod.copy.push({ src, dest, mod });
+  if ('sync' in build) {
+    pkgInfo.sync = Object.entries<string>(build.sync).map(x => ({
+      src: x[0],
+      dest: x[1],
+      pkg: pkgInfo,
+    }));
   }
-  return mod;
+  return pkgInfo;
 }
 
-function tokenizeArgs(argstr: string): string[] {
-  const args: string[] = [];
-  const reducer = (a: any[], ch: string) => {
-    if (ch !== ' ') return ch === "'" ? [a[0], !a[1]] : [a[0] + ch, a[1]];
-    if (a[1]) return [a[0] + ' ', true];
-    else if (a[0]) args.push(a[0]);
-    return ['', false];
-  };
-  const lastOne = [...argstr].reduce(reducer, ['', false])[0];
-  return lastOne ? [...args, lastOne] : args;
-}
-
-// go through package json scripts and get what we need from 'compile', 'dev', and 'deps'
-// if some other script is necessary, add it to buildScriptKeys
-function parseScripts(module: LichessModule, pkgScripts: any) {
-  const buildScriptKeys = ['deps', 'compile', 'dev', 'post'].concat(env.prod ? ['prod'] : []);
-
-  for (const script in pkgScripts) {
-    if (!buildScriptKeys.includes(script)) continue;
-    pkgScripts[script].split(/&&/).forEach((cmd: string) => {
-      // no need to support || in a script property yet, we don't even short circuit && properly
-      const args = tokenizeArgs(cmd.trim());
-      if (!['$npm_execpath', 'tsc'].includes(args[0])) {
-        script == 'prod' || script == 'post' ? module.post.push(args) : module.pre.push(args);
-      }
-    });
-  }
+export function trimAndConsolidateWhitespace(text: string): string {
+  return text.trim().replace(/\s+/g, ' ');
 }

@@ -9,7 +9,7 @@ object LameName:
 
   def hasTitle(name: String): Boolean = containsTitleRegex.matches(name)
 
-  def tournament(name: String): Boolean = tournamentRegex find name
+  def tournament(name: String): Boolean = tournamentRegex.find(name)
 
   private val titlePattern = "W*(?:[NCFI1L]|I?G)"
   private val containsTitleRegex = (
@@ -25,7 +25,6 @@ object LameName:
     "1488",
     "8814",
     "administrator",
-    "anus",
     "asshole",
     "bastard",
     "biden",
@@ -66,7 +65,6 @@ object LameName:
     "putin",
     "resign",
     "retard",
-    "shit",
     "slut",
     "suicid",
     "trump",
@@ -98,7 +96,7 @@ object LameName:
     )
 
     val subs = {
-      ('a' to 'z' map { c =>
+      (('a' to 'z').map { c =>
         c -> s"[$c${c.toUpper}${~extras.get(c)}]"
       }) ++ Seq('0' -> "[0O]", '1' -> "[1Il]", '8' -> "[8B]")
     }.toMap

@@ -22,7 +22,10 @@
     border: $border;
 
     &.active {
-      background-color: if($theme-light, #dbebfc, #262421);
+      background-color: #262421;
+      @include if-light {
+        background-color: #dbebfc;
+      }
       color: $c-font;
       text-shadow: none !important;
     }
@@ -34,14 +37,11 @@
    */
   .noUi-target,
   .noUi-target * {
+    @include prevent-select;
     -webkit-touch-callout: none;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    -webkit-user-select: none;
     -ms-touch-action: none;
     touch-action: none;
-    -ms-user-select: none;
-    -moz-user-select: none;
-    user-select: none;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
   }
@@ -94,7 +94,7 @@
     position: absolute;
   }
   .noUi-touch-area {
-    cursor: w-resize;
+    cursor: ew-resize;
     height: 100%;
     width: 100%;
   }
@@ -145,7 +145,7 @@
     border: 1px solid #d9d9d9;
     border-radius: 3px;
     background: #fff;
-    cursor: w-resize;
+    cursor: ew-resize;
     box-shadow:
       inset 0 0 1px #fff,
       inset 0 1px 7px #ebebeb,

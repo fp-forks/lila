@@ -1,8 +1,10 @@
 import * as control from './control';
-import PuzzleCtrl from './ctrl';
+import type PuzzleCtrl from './ctrl';
+import { snabDialog } from 'common/dialog';
+import { pubsub } from 'common/pubsub';
 
 export default (ctrl: PuzzleCtrl) =>
-  lichess.mousetrap
+  site.mousetrap
     .bind(['left', 'k'], () => {
       control.prev(ctrl);
       ctrl.redraw();
@@ -27,15 +29,15 @@ export default (ctrl: PuzzleCtrl) =>
         else ctrl.toggleCeval();
       }
     })
-    .bind('z', () => lichess.pubsub.emit('zen'))
+    .bind('z', () => pubsub.emit('zen'))
     .bind('?', () => ctrl.keyboardHelp(!ctrl.keyboardHelp()))
     .bind('f', ctrl.flip)
-    .bind('n', ctrl.nextPuzzle)
-    .bind('B', () => ctrl.blindfold(!ctrl.blindfold()));
+    .bind('n', ctrl.nextPuzzle);
 
 export const view = (ctrl: PuzzleCtrl) =>
-  lichess.dialog.snab({
+  snabDialog({
     class: 'help',
     htmlUrl: '/training/help',
     onClose: () => ctrl.keyboardHelp(false),
+    modal: true,
   });

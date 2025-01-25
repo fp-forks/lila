@@ -3,8 +3,7 @@ package lila.pref
 import play.api.data.*
 import play.api.data.Forms.*
 
-import lila.common.Form.{ numberIn, stringIn }
-import lila.common.Form.tolerantBoolean
+import lila.common.Form.{ numberIn, stringIn, tolerantBoolean }
 
 object PrefForm:
 
@@ -27,11 +26,11 @@ object PrefForm:
     number.verifying(Pref.BooleanPref.verify)
 
   object fields:
-    val theme      = "theme"      -> text.verifying(Theme contains _)
-    val theme3d    = "theme3d"    -> text.verifying(Theme3d contains _)
-    val pieceSet   = "pieceSet"   -> text.verifying(PieceSet contains _)
-    val pieceSet3d = "pieceSet3d" -> text.verifying(PieceSet3d contains _)
-    val soundSet   = "soundSet"   -> text.verifying(SoundSet contains _)
+    val theme      = "theme"      -> text.verifying(Theme.contains(_))
+    val theme3d    = "theme3d"    -> text.verifying(Theme3d.contains(_))
+    val pieceSet   = "pieceSet"   -> text.verifying(PieceSet.contains(_))
+    val pieceSet3d = "pieceSet3d" -> text.verifying(PieceSet3d.contains(_))
+    val soundSet   = "soundSet"   -> text.verifying(SoundSet.contains(_))
     val bg         = "bg"         -> stringIn(Pref.Bg.fromString.keySet)
     val bgImg = "bgImg" -> text(maxLength = 400).verifying(
       "URL must use https",
@@ -48,9 +47,16 @@ object PrefForm:
     val submitMove    = "submitMove"    -> bitCheckedNumber(Pref.SubmitMove.choices)
     val confirmResign = "confirmResign" -> checkedNumber(Pref.ConfirmResign.choices)
     val moretime      = "moretime"      -> checkedNumber(Pref.Moretime.choices)
-    val ratings       = "ratings"       -> booleanNumber
+    val clockSound    = "clockSound"    -> booleanNumber
+    val pieceNotation = "pieceNotation" -> booleanNumber
+    val ratings       = "ratings"       -> checkedNumber(Pref.Ratings.choices)
     val flairs        = "flairs"        -> boolean
     val follow        = "follow"        -> booleanNumber
+    val challenge     = "challenge"     -> checkedNumber(Pref.Challenge.choices)
+    object board:
+      val brightness = "boardBrightness" -> number(0, 150)
+      val opacity    = "boardOpacity"    -> number(0, 100)
+      val hue        = "boardHue"        -> number(0, 100)
 
   def pref(lichobile: Boolean) = Form(
     mapping(
@@ -73,7 +79,7 @@ object PrefForm:
         fields.autoThreefold,
         fields.submitMove.map2: mapping =>
           if lichobile then
-            import Pref.SubmitMove.{ lichobile as compat }
+            import Pref.SubmitMove.lichobile as compat
             optional(numberIn(compat.choices).transform(compat.appToServer, compat.serverToApp))
           else optional(mapping),
         fields.confirmResign,
@@ -88,7 +94,7 @@ object PrefForm:
         fields.moretime
       )(ClockData.apply)(unapply),
       fields.follow,
-      "challenge"    -> checkedNumber(Pref.Challenge.choices),
+      fields.challenge,
       "message"      -> checkedNumber(Pref.Message.choices),
       "studyInvite"  -> optional(checkedNumber(Pref.StudyInvite.choices)),
       "insightShare" -> numberIn(Set(0, 1, 2)),

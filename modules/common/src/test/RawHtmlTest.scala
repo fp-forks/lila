@@ -1,11 +1,12 @@
-package lila.base
+package lila.common
 
-import lila.common.{ Html, config }
+import lila.core.config.NetDomain
+
 import RawHtml.*
 
 class RawHtmlTest extends munit.FunSuite:
 
-  given config.NetDomain = config.NetDomain("lichess.org")
+  given NetDomain = NetDomain("lichess.org")
   given munit.Compare[Html, String] with
     def isEqual(obtained: Html, expected: String): Boolean = obtained.value == expected
 

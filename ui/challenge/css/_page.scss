@@ -1,12 +1,4 @@
 .challenge-page {
-  .challenge-id-form {
-    display: flex;
-
-    input {
-      width: 100%;
-    }
-  }
-
   .invite {
     display: grid;
     gap: $block-gap;
@@ -24,7 +16,7 @@
     }
 
     &__user {
-      @include breakpoint($mq-x-small) {
+      @media (min-width: at-least($x-small)) {
         grid-area: 1 / 2 / 3 / 2;
       }
 
@@ -36,7 +28,7 @@
         .button {
           background: none;
           border: $border;
-          text-align: $start-direction;
+          text-align: start;
           text-transform: none;
         }
       }
@@ -64,6 +56,7 @@
     .correspondence-waiting {
       font-size: 1.5em;
       margin: 2em auto;
+
       &::before {
         color: $c-good;
       }
@@ -75,59 +68,98 @@
     text-align: center;
   }
 
-  .details {
-    @extend %flex-between, %box-neat;
+  .details-wrapper {
+    @extend %box-neat;
 
-    $c-bg: mix($c-good, $c-bg-box, 10%);
-    --c-font: #{$c-good};
-    --c-bg: #{$c-bg};
+    ---font: #{$c-secondary};
+    ---bg: #{$m-secondary_bg--mix-10};
 
     padding: $block-gap 4vw;
     margin-bottom: 4rem;
     font-size: 1.5em;
 
-    @include breakpoint($mq-xx-small) {
+    @media (min-width: at-least($xx-small)) {
       font-size: 2em;
     }
 
-    background: var(--c-bg);
-    border: 1px solid var(--c-font);
+    background: var(---bg);
+    border: 1px solid var(---font);
 
-    > div {
-      flex: 0 1 auto;
-      @extend %flex-center, %roboto;
+    .content {
+      @extend %flex-between;
 
-      &::before {
-        color: var(--c-font);
-        font-size: 6rem;
-        margin-#{$end-direction}: 0.2em;
+      > div {
+        flex: 0 1 auto;
+        @extend %flex-center, %roboto;
 
-        @include breakpoint($mq-not-xx-small) {
-          display: none;
+        &::before {
+          color: var(---font);
+          font-size: 6rem;
+          margin-inline-end: 0.2em;
+
+          @media (max-width: at-most($xx-small)) {
+            display: none;
+          }
+        }
+
+        div {
+          line-height: 1.4;
+        }
+
+        .clock {
+          font-weight: bold;
         }
       }
 
-      div {
-        line-height: 1.4;
-      }
-
-      .clock {
+      .mode {
+        text-align: end;
         font-weight: bold;
+        font-size: 0.8em;
+        color: var(---font);
       }
     }
 
-    .mode {
-      text-align: $end-direction;
-      font-weight: bold;
-      font-size: 0.8em;
-      color: var(--c-font);
+    .rules {
+      margin-top: 1.5rem;
+      font-size: 1rem;
+
+      > div {
+        @extend %flex-center;
+        gap: 1em;
+        margin-top: 1em;
+
+        .challenge-rule {
+          @extend %flex-center;
+
+          .icon-flair {
+            height: 1.5em;
+            margin: 0.2em 0.8em 0 0;
+          }
+        }
+      }
     }
   }
 
+  .mobile-instructions {
+    @extend %flex-center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+
+  .mobile-instructions::before {
+    font-family: 'lichess';
+    font-size: 3rem;
+    padding-inline-end: 1rem;
+    content: $licon-ShareAndroid;
+  }
+
+  .mobile-instructions.is-ios::before {
+    content: $licon-ShareIos;
+  }
+
   &.challenge--declined .details {
-    $c-bg: mix($c-bad, $c-bg-box, 10%);
-    --c-font: #{$c-bad};
-    --c-bg: #{$c-bg};
+    ---font: #{$c-bad};
+    ---bg: #{c_bad_bg--mix-10};
   }
 
   .challenge-reason {
