@@ -21,6 +21,8 @@
   <string name="createBlogDiscussionHelp">Va fi creat un subiect pe forum pentru ca oamenii să comenteze despre postarea dumneavoastră</string>
   <string name="publishOnYourBlog">Publică pe blogul tău</string>
   <string name="publishHelp">Daca bifezi, postarea va fi listată pe blogul tau. Daca nu, va fi privată, în ciornele tale</string>
+  <string name="stickyPost" comment="Label for the toggle that can make this blog post sticky.">Fixează postarea</string>
+  <string name="stickyPostHelp">Dacă este bifat, această postare va fi listată înaintea postărilor recente de pe profil.</string>
   <plurals name="publishedNbBlogPosts">
     <item quantity="one">A publicat o postare pe blog</item>
     <item quantity="few">A publicat %s postări pe blog</item>
@@ -47,7 +49,6 @@
   <string name="imageAlt">Text alternativ imagine</string>
   <string name="imageCredit">Sursa imagine</string>
   <string name="deleteBlog">Șterge definitiv această postare pe blog</string>
-  <string name="deleteImage">Șterge imaginea</string>
   <string name="safeToUseImages">Este sigur să folosiți imagini de pe următoarele site-uri: </string>
   <string name="selectPostTopics">Selectează subiectele de discuție despre care este vorba</string>
   <string name="useImagesYouMadeYourself">Poți folosi, de asemenea, imagini pe care le-ai făcut singur, fotografii pe care le-ai făcut, capturi de ecran din Lichess... orice nu este protejat de drepturi de autor ale altcuiva.</string>
@@ -55,4 +56,5 @@
   <string name="inappropriateContentAccountClosed">Orice lucru nepotrivit ar putea duce la închiderea contului tău.</string>
   <string name="blogTips">Sfaturile noastre simple pentru a scrie cele mai bune postări pe blog</string>
   <string name="discussThisBlogPostInTheForum">Discută această postare pe forum</string>
+  <string name="youBlockedByBlogAuthor">Ești blocat de autorul blogului.</string>
 </resources>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="playWithAFriend">මිතුරෙකු හා ක්‍රීඩා කරන්න</string>
+  <string name="playWithAFriend">යහළුවෙකු සමඟ ක්‍රීඩා කරන්න</string>
   <string name="playWithTheMachine">පරිගණකය සමඟ ක්‍රීඩා කරන්න</string>
   <string name="toInviteSomeoneToPlayGiveThisUrl">ක්‍රීඩා කිරීමට යමෙකුට ආරාධනා කිරීමට, මෙම URL එක දෙන්න</string>
   <string name="gameOver">තරගය අවසන්</string>
@@ -61,7 +61,7 @@
   <string name="usingServerAnalysis">සර්වර් විශ්ලේෂණය භාවිතා කිරීම</string>
   <string name="loadingEngine">එන්ජිම පූරණය වේ ...</string>
   <string name="calculatingMoves">ගණනය වෙමින්...</string>
-  <string name="engineFailed">lichess</string>
+  <string name="engineFailed">එන්ජිම නොකරයි</string>
   <string name="cloudAnalysis">වලාකුළු විශ්ලේෂණය</string>
   <string name="goDeeper">ගැඹුරට යන්න</string>
   <string name="showThreat">තර්ජනය පෙන්වන්න</string>
@@ -70,6 +70,8 @@
   <string name="promoteVariation">විචලනය ප්‍රමුඛ කරන්න</string>
   <string name="makeMainLine">ප්‍රමුඛ රේඛාව කරන්න</string>
   <string name="deleteFromHere">මෙතැන සිට මකන්න</string>
+  <string name="collapseVariations">කඩා වැටෙ</string>
+  <string name="expandVariations">විචලනය පුළුල් කරන්න</string>
   <string name="forceVariation">බලෙන්ම ලබාගත් විචලනය</string>
   <string name="copyVariationPgn">The variaty</string>
   <string name="move">ඇදීම</string>
@@ -93,7 +95,7 @@
     <item quantity="one">ඇදීම් %sකින් චෙක්මේට්</item>
     <item quantity="other">ඇදීම් වාර %sකින් චෙක්මේට්</item>
   </plurals>
-  <string name="dtzWithRounding">DTZ50\'\' with rounding, based on number of half-moves until next capture or pawn move</string>
+  <string name="dtzWithRounding">DTZ50\'\' වටකුරු සහිත, ඊළඟ අල්ලන්න හෝ උකස් චලනය වන තෙක් අර්ධ චලනයන් ගණන මත පදනම්ව</string>
   <string name="noGameFound">සෙල්ලමක් හමුවුන්නෑ</string>
   <string name="maxDepthReached">උපරිම ගැඹුරට ළඟා විය!
 යතුර: maxDepthReached
@@ -120,7 +122,6 @@ PlayFirstOpeningEndgameExplorerMove
   <string name="replayMode">නැවත කිරීමේ අන්දම</string>
   <string name="realtimeReplay">එසැණින්</string>
   <string name="byCPL">CPL තුල</string>
-  <string name="openStudy">විවෘත අධ්‍යයනය</string>
   <string name="enable">සක්‍රීය කරන්න</string>
   <string name="bestMoveArrow">හොඳම ඇදීම පෙන්නන්න</string>
   <string name="showVariationArrows">වෙනස්කම් ඊතල පෙන්වන්න</string>
@@ -130,7 +131,6 @@ PlayFirstOpeningEndgameExplorerMove
   <string name="memory">මතකය</string>
   <string name="infiniteAnalysis">අනන්තවත් ඇගයීම්</string>
   <string name="removesTheDepthLimit">ගැඹුර සීමාව ඉවත් කර ඔබේ පරිගණකය උණුසුම්ව තබයි</string>
-  <string name="engineManager">එන්ජින් කළමනාකරු</string>
   <string name="blunder">ලොකු වරද</string>
   <string name="mistake">සුළු වරද</string>
   <string name="inaccuracy">නිවැරදිම නෑ</string>
@@ -138,7 +138,23 @@ PlayFirstOpeningEndgameExplorerMove
     <item quantity="one">%sලොකු වරද</item>
     <item quantity="other">%sලොකු වරදවල්</item>
   </plurals>
+  <plurals name="numberBlunders">
+    <item quantity="one">%sලොකු වරද</item>
+    <item quantity="other">%sලොකු වරදවල්</item>
+  </plurals>
+  <plurals name="nbMistakes">
+    <item quantity="one">%s දෝෂය ඇත</item>
+    <item quantity="other">%sදෝෂ ඇත</item>
+  </plurals>
+  <plurals name="numberMistakes">
+    <item quantity="one">%s දෝෂය ඇත</item>
+    <item quantity="other">%sදෝෂ ඇත</item>
+  </plurals>
   <plurals name="nbInaccuracies">
+    <item quantity="one">%sනිවැරදිම නෑ</item>
+    <item quantity="other">%sනිවැරදිම නෑ</item>
+  </plurals>
+  <plurals name="numberInaccuracies">
     <item quantity="one">%sනිවැරදිම නෑ</item>
     <item quantity="other">%sනිවැරදිම නෑ</item>
   </plurals>
@@ -155,6 +171,14 @@ PlayFirstOpeningEndgameExplorerMove
   <string name="drawByMutualAgreement">අන්යොන්ය එකඟතාවයෙන් ඇඳීම</string>
   <string name="fiftyMovesWithoutProgress">ප්‍රගතියක් නොමැතිව චලනයන් පනහක්</string>
   <string name="currentGames">වර්තමාන තරඟ</string>
+  <plurals name="nbGames">
+    <item quantity="one">%sතරගය</item>
+    <item quantity="other">%sතරඟ</item>
+  </plurals>
+  <plurals name="ratingXOverYGames">
+    <item quantity="one">%2$s තරගයට වඩා %1$s ශෙනිය ඉහළයි</item>
+    <item quantity="other">%2$s තරග වලට වඩා %1$s ශෙනිය ඉහළයි</item>
+  </plurals>
   <plurals name="nbBookmarks">
     <item quantity="one">%sබුක්මාකය</item>
     <item quantity="other">%sබුක්මාක්ස්</item>
@@ -172,6 +196,7 @@ PlayFirstOpeningEndgameExplorerMove
   <string name="latestForumPosts">නවතම පෝරම සටහන්</string>
   <string name="players">ක්‍රීඩකයන්</string>
   <string name="friends">යහළුවන්</string>
+  <string name="otherPlayers">වෙනත් තරගකරුවන්</string>
   <string name="discussions">සංවාද</string>
   <string name="today">අද</string>
   <string name="yesterday">ඊයේ</string>
@@ -191,6 +216,10 @@ PlayFirstOpeningEndgameExplorerMove
     <item quantity="one">%s පැයක්</item>
     <item quantity="other">%s පැය</item>
   </plurals>
+  <plurals name="nbMinutes">
+    <item quantity="one">විනාඩි, ය %s</item>
+    <item quantity="other">විනාඩි %s</item>
+  </plurals>
   <string name="time">වෙලාව</string>
   <string name="rating">තක්සේරු</string>
   <string name="ratingStats">තක්සේරු තත්වය</string>
@@ -199,18 +228,18 @@ PlayFirstOpeningEndgameExplorerMove
   <string name="changeUsername">පරිශීලක නාමය වෙනස් කරන්න</string>
   <string name="changeUsernameNotSame">වෙනස් විය හැක්කේ අක්ෂරවල සිද්ධිය පමණි. උදාහරණයක් ලෙස \"ජොන්ඩෝ\" සිට \"ජෝන්ඩෝ\".</string>
   <string name="changeUsernameDescription">ඔබගේ පරිශීලක නාමය වෙනස් කරන්න. මෙය කළ හැක්කේ එක් වරක් පමණක් වන අතර ඔබේ පරිශීලක නාමයේ ඇති අකුරු වෙනස් කිරීමට ඔබට අවසර ඇත.</string>
-  <string name="signupUsernameHint">lichess</string>
-  <string name="signupEmailHint">sinhala</string>
+  <string name="signupUsernameHint">සංවර නමක් යොදන්න. පසුව ඔබට නම මාරු කර නොහැක. අසංවර නම් සහිත ගිණුම් වසා දමනු ලැබේ!</string>
+  <string name="signupEmailHint">අපි එය බාවිතා කරන්නේ මුරපදය අලුත් කරන්න පමණී.</string>
   <string name="password">මුරපදය</string>
   <string name="changePassword">මුරපදය වෙනස් කරන්න</string>
   <string name="changeEmail">විද්‍යුත් තැපෑල වෙනස් කරන්න</string>
   <string name="email">ඊතැපෑල</string>
   <string name="passwordReset">මුරපදය වෙනස් කරන්න</string>
   <string name="forgotPassword">මුරපදය මතක නැහැ?</string>
-  <string name="error.weakPassword">sinhala</string>
-  <string name="error.namePassword">sinhala</string>
-  <string name="blankedPassword">sinhala</string>
-  <string name="youAreLeavingLichess">sinhala</string>
+  <string name="error.weakPassword">මේ මුරපදය බෙහෙවින් දැක ගත හැකි අතර, උපකල්පනය කරන්න හරිම පහසුයි.</string>
+  <string name="error.namePassword">ඔබේ නම මුරපදය නොවිය යුතුයි.</string>
+  <string name="blankedPassword">ඔබ එකම මුරපදය වෙනත් අඩවියක යොදාගෙන ඇති අතර, එම අඩවිය තර්ජනයට ලක්ව ඇත. ඔබේ ගිණුමේ ආරක්ෂාව සහතික කිරීම සඳහා, අපට ඔබ නව මුරපදය සාදන්න අවශ්‍ය වේ.</string>
+  <string name="youAreLeavingLichess">ඔබ පිට වීමටයි යන්නේ</string>
   <string name="neverTypeYourPassword">ඔබේ Lichess මුරපදය වෙනත් වෙබ් අඩවියක ටයිප් නොකරන්න!</string>
   <string name="proceedToX">%s වෙත යන්න</string>
   <string name="passwordSuggestion">වෙනත් කෙනෙකු විසින් යෝජනා කරන ලද මුරපදයක් නොසකසන්න. ඔවුන් ඔබේ ගිණුම සොරකම් කිරීමට එය භාවිතා කරනු ඇත.</string>
@@ -238,7 +267,16 @@ PlayFirstOpeningEndgameExplorerMove
     <item quantity="one">ශ්‍රේණිය සෑම මිනිත්තුවකම යාවත්කාලීන වේ</item>
     <item quantity="other">සෑම මිනිත්තු %s ශ්‍රේණිය යාවත්කාලීන වේ</item>
   </plurals>
+  <plurals name="nbPuzzles">
+    <item quantity="one">%s චෙස් ප්‍රහේලිකාව</item>
+    <item quantity="other">%s ප්‍රෙහෙලිකා</item>
+  </plurals>
   <string name="gamesPlayed">ක්‍රීඩා කල ක්‍රීඩා ගණන</string>
+  <plurals name="nbGamesWithYou">
+    <item quantity="one">%s ඔබ සමග තරඟය</item>
+    <item quantity="other">%s ඔබ සමග තරඟ</item>
+  </plurals>
+  <string name="ok">හරි</string>
   <string name="cancel">අවලංගු කරන්න</string>
   <string name="whiteTimeOut">සුදුගේ වේලාව ඉවතට</string>
   <string name="blackTimeOut">කලුගේ වේලාව ඉවතට</string>
@@ -258,6 +296,7 @@ PlayFirstOpeningEndgameExplorerMove
   <string name="abortGame">තරඟය නවත්වන්න</string>
   <string name="gameAborted">තරගය අත්හැර දැමුනි</string>
   <string name="standard">සම්මත</string>
+  <string name="customPosition">Custom පිහිටීම</string>
   <string name="unlimited">සිමාරහිත</string>
   <string name="mode">ප්‍රකාරය</string>
   <string name="casual">සාමාන්‍ය</string>
@@ -289,6 +328,10 @@ You are playing chess.</string>
     <item quantity="one">%s ශ්‍රේණිගත කර ඇත</item>
     <item quantity="other">%s ශ්‍රේණිගත කර ඇත</item>
   </plurals>
+  <plurals name="nbWins">
+    <item quantity="one">දිනුම %s</item>
+    <item quantity="other">දිනුම් %s</item>
+  </plurals>
   <plurals name="nbLosses">
     <item quantity="one">%s loss</item>
     <item quantity="other">%s loss</item>
@@ -297,8 +340,16 @@ You are playing chess.</string>
     <item quantity="one">%s draw</item>
     <item quantity="other">%s draws</item>
   </plurals>
+  <plurals name="nbPlaying">
+    <item quantity="one">කරන %s</item>
+    <item quantity="other">කරන %s</item>
+  </plurals>
   <string name="exportGames">තරග ආනයනය කරන්න</string>
   <string name="ratingRange">ශ්‍රේණිගත පරාසය</string>
+  <plurals name="giveNbSeconds">
+    <item quantity="one">තප්පර %s දීම</item>
+    <item quantity="other">තප්පර %s දීම</item>
+  </plurals>
   <string name="thisAccountViolatedTos">මෙම ගිණුම Lichess සේවා කොන්දේසි උල්ලංඝනය කර ඇත</string>
   <string name="openingExplorerAndTablebase">Opening explorer &amp; වගු පදනම</string>
   <string name="takeback">ආපසු ගැනීම</string>
@@ -312,9 +363,17 @@ You are playing chess.</string>
   <string name="tournament">තරඟාවලිය</string>
   <string name="tournaments">තරඟාවලි</string>
   <string name="tournamentPoints">තරඟාවලි ලකුණු</string>
+  <plurals name="nbTournamentPoints">
+    <item quantity="one">%s තරඟාවලි ලකුණු</item>
+    <item quantity="other">%s තරඟාවලි ලකුණු</item>
+  </plurals>
   <plurals name="nbStudies">
     <item quantity="one">%s අධ්‍යයනය</item>
     <item quantity="other">%sඅධ්යයන</item>
+  </plurals>
+  <plurals name="nbSimuls">
+    <item quantity="one">%s එකලස් තරගය</item>
+    <item quantity="other">%s එකලස් තරග</item>
   </plurals>
   <string name="viewTournament">තරඟාවලිය බලන්න</string>
   <string name="backToTournament">තරඟාවලිය වෙත ආපසු</string>
@@ -366,6 +425,10 @@ You are playing chess.</string>
 පරිගණක විශ්ලේෂණය, ක්‍රීඩා කතාබස් සහ බෙදාගත හැකි URL.</string>
   <string name="importGameCaveat">වේරියේශන් මැකෙනු ලැබේ. ඒවා තබා ගැනීමට අධ්‍යයනයක් හරහා pgn ආනයනය කරන්න.</string>
   <string name="importGameDataPrivacyWarning">මෙම pgn එක වෙත​ මහජනතාවට ප්‍රවේශ විය හැක. ක්‍රීඩාවක් පුද්ගලිකව ආනයනය කිරීමට, අධ්‍යයනයක් භාවිතා කරන්න.</string>
+  <plurals name="nbImportedGames">
+    <item quantity="one">%s ආනයනික තරගය</item>
+    <item quantity="other">%s ආනයනික තරග</item>
+  </plurals>
   <string name="thisIsAChessCaptcha">මෙය චෙස් CAPTCHA එකකි.</string>
   <string name="clickOnTheBoardToMakeYourMove">ඔබගේ ඇදීම​ කිරීමට පුවරුව මත ක්ලික් කරන්න, සහ ඔබ මිනිසෙකු බව ඔප්පු කරන්න.</string>
   <string name="captcha.fail">කරුණාකර චෙස් captchaව​ විසඳන්න.</string>
@@ -374,6 +437,11 @@ You are playing chess.</string>
   <string name="blackCheckmatesInOneMove">කළුට එක ඇදීමකින් චෙක්මේට් කිරීමට</string>
   <string name="retry">නැවත උත්සාහ කරන්න</string>
   <string name="reconnecting">නැවත සම්බන්ධ වෙමින්</string>
+  <string name="noNetwork">Offline</string>
+  <plurals name="nbFriendsOnline">
+    <item quantity="one">%s යහළුවන් සජීවීව සිටියි</item>
+    <item quantity="other">%s යාළුවන් සජීවීව සිටියි</item>
+  </plurals>
   <string name="favoriteOpponents">කැමති ප්රතිවාදීන්</string>
   <string name="follow">අනුගමනය කරන්න</string>
   <string name="following">අනුගමනය කෙරේ</string>
@@ -383,7 +451,6 @@ You are playing chess.</string>
   <string name="block">අවහිර කරන්න</string>
   <string name="blocked">අවහිර කර ඇත</string>
   <string name="unblock">අවහිර නොකරන්න</string>
-  <string name="followsYou">ඔබව අනුගමනය කරයි</string>
   <string name="xStartedFollowingY">%1$s අනුගමනය ආරම්භ කළය​%2$s</string>
   <plurals name="nbFollowers">
     <item quantity="one">%sඅනුගාමිකයා</item>
@@ -415,9 +482,6 @@ You are playing chess.</string>
   <string name="safeTournamentName">තරඟාවලිය සඳහා ඉතා ආරක්ෂිත නමක් තෝරන්න.</string>
   <string name="inappropriateNameWarning">තරමක් නුසුදුසු ඕනෑම දෙයක් නිසා ඔබගේ ගිණුම වසා දැමිය හැක.</string>
   <string name="emptyTournamentName">කැපී පෙනෙන චෙස් ක්‍රීඩකයෙකුගේ නමින් තරඟාවලිය නම් කිරීමට හිස්ව තබන්න.</string>
-  <string name="recommendNotTouching">මේවා ඇල්ලීම​ නොකරන ලෙස අපි නිර්දේශ කරමු.</string>
-  <string name="fewerPlayers">ඔබ ප්‍රවේශ අවශ්‍යතා සකසන්නේ නම්, ඔබේ තරඟාවලියට ක්‍රීඩකයින් සංඛ්‍යාව අඩු වනු ඇත.</string>
-  <string name="showAdvancedSettings">උසස් සැකසුම් පෙන්වන්න</string>
   <string name="makePrivateTournament">තරඟාවලිය පුද්ගලික කරන්න, මුරපදයකින් ප්‍රවේශය සීමා කරන්න</string>
   <string name="join">එකතු වන්න​</string>
   <string name="withdraw">ඉල්ලා අස් වෙන්න​</string>
@@ -449,6 +513,7 @@ You are playing chess.</string>
   <string name="chess960StartPosition">Chess960 ආරම්භක ස්ථානය%s</string>
   <string name="startPosition">ආරම්භක ස්ථානය</string>
   <string name="clearBoard">පුවරුව පැහැදිලි කරන්න​</string>
+  <string name="loadPosition">position එක පටවන්න​</string>
   <string name="isPrivate">පෞද්ගලික</string>
   <string name="reportXToModerators">පරිපාලකයින්ට %s වාර්තා කරන්න</string>
   <string name="profileCompletion">පැතිකඩ සම්පූර්ණ කිරීම%s</string>
@@ -456,8 +521,10 @@ You are playing chess.</string>
   <string name="ifNoneLeaveEmpty">කිසිවක් නොමැති නම්, හිස්ව තබන්න</string>
   <string name="profile">පැතිකඩ</string>
   <string name="editProfile">පැතිකඩ සංස්කරණය කරන්න</string>
-  <string name="firstName">මුල් නම</string>
-  <string name="lastName">වාසගම</string>
+  <string name="realName">ඇත්ත නම</string>
+  <string name="setFlair">ඔබේ ෆ්ලෙයාර්ය​ සකසන්න</string>
+  <string name="flair">ෆ්ලෙයාරය</string>
+  <string name="youCanHideFlair">සම්පූර්ණ වෙබ් අඩවිය හරහා සියලුම පරිශීලක ෆ්ලෙයාර සැඟවීමට සැකසීමක් ඇත.</string>
   <string name="biography">චරිතාපදානය</string>
   <string name="countryRegion" comment="flag&#10;Appears when you edit your profile. Lets a player add a country/flag (not all flags are for countries) to their profile">රට හෝ ප්‍රදේශය​</string>
   <string name="thankYou">ඔබට ස්තුතියි!</string>
@@ -478,13 +545,15 @@ You are playing chess.</string>
   <string name="automaticallyProceedToNextGameAfterMoving">ඇදීමෙන් පසු ස්වයංක්‍රීයව ඊළඟ ක්‍රීඩාවට යන්න​</string>
   <string name="autoSwitch">ස්වයංක්‍රීයව මාරු වෙන්න​</string>
   <string name="puzzles">ප්‍රහේලිකා</string>
-  <string name="tournamentWinners">තරඟාවලි ජයග්‍රාහකයින්</string>
+  <string name="onlineBots">ඔන්ලයින් බොට්ස්</string>
   <string name="name">නම</string>
   <string name="description">විස්තරය</string>
   <string name="descPrivate">​පෞද්ගලික විස්තරය</string>
   <string name="descPrivateHelp">කණ්ඩායමේ සාමාජිකයින්ට පමණක් පෙනෙන පෙළ. සකසා ඇත්නම්, කණ්ඩායම් සාමාජිකයින් සඳහා පොදු විස්තරය ප්‍රතිස්ථාපනය කරයි.</string>
   <string name="no">නැහැ</string>
   <string name="yes">ඔව්</string>
+  <string name="website">අඩවිය</string>
+  <string name="mobile">දුරකතනය</string>
   <string name="help">උදව්:</string>
   <string name="createANewTopic">නව මාතෘකාවක් සාදන්න</string>
   <string name="topics">මාතෘකා</string>
@@ -501,13 +570,36 @@ You are playing chess.</string>
   <string name="reason">හේතුව</string>
   <string name="whatIsIheMatter">කාරණය කුමක් ද?</string>
   <string name="cheat">වංචාකරණ​ය​</string>
-  <string name="insult">අපහාස කිරීම​</string>
   <string name="troll">ට්‍රෝල් කිරීම​</string>
-  <string name="ratingManipulation">ශ්‍රේණිගත කිරීම් වංචාව​</string>
   <string name="other">වෙනත්</string>
-  <string name="reportDescriptionHelp">ක්‍රීඩා(ව​) වෙත සබැඳිය අලවා මෙම පරිශීලකයාගේ හැසිරීමේ ඇති වරද කුමක්දැයි පැහැදිලි කරන්න. \"ඔවුන් වංචා කරනවා\" පමණක් නොකියන්න, නමුත් ඔබ මෙම නිගමනයට පැමිණියේ කෙසේදැයි අපට කියන්න. ඔබේ වාර්තාව ඉංග්‍රීසියෙන් ලියා ඇත්නම් වේගයෙන් සකසනු ලැබේ.</string>
+  <string name="reportCheatBoostHelp">ලින්ක් එක සමග තරඟය (තරඟ) පිළිබඳ විස්තරය එවන්න. මෙම කෙනා ගැන කුමක් හොරාකමක් යැයි නම් කළ හැකිදැයි පැහැදිලි කරන්න. \'ඔවුන් හොරාකම් කරති\' යන්න පමණක් නොකියමින්, එය කොහෙද සහ ඔබ එයට කෙසේ සාක්ෂාත් කරන්න.</string>
+  <string name="reportUsernameHelp">මෙම පරිශීලක නාමය අවමානාත්මක යැයි සනාථ කළේ කෙසේද යන්න විස්තර කරන්න. \'මේක අවමානාත්මකයි/නරකයි\' යන්න පමණක් නොකිය, නමුත් එය කුමක් නිසාදැයි පැහැදිලි කරන්න. විශේෂයෙන්ම එය සෘජුවෙන් නොපෙනෙන එකක් නම්, අභ්‍යන්තර අර්ථය නොපෙනෙන ඉංග්‍රීසියෙන් නොවූ, එකකින් හෝ ඉතිහාසය/සංස්කෘතික නියෝගයක් මත පදනම් වූ එකක් නම් එය සනාථ කරන්න.\".</string>
+  <string name="reportProcessedFasterInEnglish">ඉංග්‍රීසියන් ලීයූ දෑ ඉක්මනට සෝදිසි කරයි.</string>
   <string name="error.provideOneCheatedGameLink">වංචා කළ ක්‍රීඩාව සඳහා එක් සබැඳියක්වත් දීමට කාරුණික වන්න​.</string>
+  <string name="by">%s විසින්</string>
+  <string name="importedByX">%s විසින් ආනයනය කරන ලදී</string>
+  <string name="thisTopicIsNowClosed">මෙම මාතෘකාව දැන් වසා ඇත.</string>
   <string name="blog">බ්ලොග්</string>
+  <string name="notes">සටහන්</string>
+  <string name="typePrivateNotesHere">පුද්ගලික සටහන් මෙහි ටයිප් කරන්න</string>
+  <string name="writeAPrivateNoteAboutThisUser">මෙම පරිශීලකයා ගැන පුද්ගලික සටහනක් ලියන්න</string>
+  <string name="noNoteYet">තවමත් සටහනක් නැත</string>
+  <string name="invalidUsernameOrPassword">වලංගු නොවන පරිශීලක නාමයක් හෝ මුරපදයක්</string>
+  <string name="incorrectPassword">Incorrect password</string>
+  <string name="invalidAuthenticationCode">වලංගු නොවන සත්‍යාපන කේතය</string>
+  <string name="emailMeALink">මට සබැඳියක් ඊමේල් කරන්න</string>
+  <string name="currentPassword">වත්මන් මුර පදය</string>
+  <string name="newPassword">නව මුරපදය</string>
+  <string name="newPasswordAgain">නව මුරපදය (නැවත)</string>
+  <string name="newPasswordsDontMatch">නව මුරපද නොගැලපේ</string>
+  <string name="newPasswordStrength">Password strength</string>
+  <string name="clockInitialTime">ඔරලෝසු ආරම්භක වේලාව</string>
+  <string name="clockIncrement">ඔරලෝසු වැඩිවීම</string>
+  <string name="privacy">පෞද්ගලිකත්වය</string>
+  <string name="privacyPolicy">පෞද්ගලිකත්ව ප්‍රතිපත්තිය​</string>
+  <string name="letOtherPlayersFollowYou">අනෙක් ක්‍රීඩකයින්ට ඔබව follow කිරීමට ඉඩ දෙන්න</string>
+  <string name="letOtherPlayersChallengeYou">අනෙක් ක්‍රීඩකයින්ට ඔබට අභියෝග කිරීමට ඉඩ දෙන්න</string>
+  <string name="letOtherPlayersInviteYouToStudy">ඔබට ඉගෙනීමට ආරාධනා කිරීමට අනෙකුත් ක්‍රීඩකයින්ට ඉඩ දෙන්න</string>
   <string name="sound">ශබ්දය</string>
   <string name="none">කිසිවක් නැත</string>
   <string name="fast">ඉක්මනින්</string>
@@ -527,6 +619,16 @@ You are playing chess.</string>
   <string name="timeline">කාලරාමුව</string>
   <string name="starting">ආරම්භ කිරීම:</string>
   <string name="allInformationIsPublicAndOptional">සියලුම තොරතුරු පොදු සහ විකල්ප වේ.</string>
+  <string name="biographyDescription">ඔබ ගැන, ඔබේ රුචිකත්වයන්, ඔබ චෙස් ක්‍රීඩාවට කැමති දේ, ඔබේ ප්‍රියතම opening එක​ , ක්‍රීඩකයින්, ...</string>
+  <plurals name="maximumNbCharacters">
+    <item quantity="one">උපරිම: අනුලකුණු %s.</item>
+    <item quantity="other">උපරිම: අනුලකුණු %s.</item>
+  </plurals>
+  <plurals name="blocks">
+    <item quantity="one">%s අවහිර</item>
+    <item quantity="other">%s වාරණ</item>
+  </plurals>
+  <string name="listBlockedPlayers">ඔබ අවහිර කර ඇති ක්‍රීඩකයින් ලැයිස්තුගත කරන්න</string>
   <string name="human">මිනිසා</string>
   <string name="computer">පරිගණකය​</string>
   <string name="side">පැත්ත</string>
@@ -556,6 +658,9 @@ You are playing chess.</string>
   <string name="castling">කාසල් කිරීම​</string>
   <string name="whiteCastlingKingside">සුදු O-O</string>
   <string name="blackCastlingKingside">කළු O-O</string>
+  <string name="tpTimeSpentPlaying">ක්‍රීඩා කළ කාලය: %s</string>
+  <string name="watchGames">ක්‍රීඩා නරඹන්න</string>
+  <string name="tpTimeSpentOnTV">රූපවාහිනියේ දර්ශනය වූ කාලය: %s</string>
   <string name="watch">නරඹන්න</string>
   <string name="videoLibrary">වීඩියෝ පුස්තකාලය</string>
   <string name="streamersMenu">ප්‍රවාහකයන්</string>
@@ -563,9 +668,22 @@ You are playing chess.</string>
   <string name="webmasters">වෙබ්මාස්ටර්වරුන්</string>
   <string name="about">පිළිබඳව</string>
   <string name="aboutX">%s පිළිබඳව</string>
+  <string name="xIsAFreeYLibreOpenSourceChessServer">%1$s යනු නොමිලේ (%2$s), නිදහස්, දැන්වීම් රහිත, විවෘත මූලාශ්‍ර චෙස් සේවාදායකයකි.</string>
   <string name="really">සිරාවටම</string>
+  <string name="contribute">දායක වන්න</string>
+  <string name="termsOfService">සේවා කොන්දේසි</string>
+  <string name="sourceCode">ප්‍රභව කේතය​</string>
+  <string name="simultaneousExhibitions">Simultaneous exhibitions</string>
   <string name="host">සත්කාරක</string>
   <string name="hostColorX">සත්කාරකයාගේ වර්ණය​:%s</string>
+  <string name="yourPendingSimuls">ඔබගේ Pending වන simul</string>
+  <string name="createdSimuls">අලුතින් නිර්මාණය කරන ලද simul</string>
+  <string name="hostANewSimul">නව simul එකක් සත්කාරක කරන්න</string>
+  <string name="signUpToHostOrJoinASimul">සත්කාරක වීමට හෝ simul එකකට සම්බන්ධ වීමට ලියාපදිංචි වන්න</string>
+  <string name="noSimulFound">Simul එක හමු නොවීය</string>
+  <string name="noSimulExplanation">මෙම simul එක නොපවතී.</string>
+  <string name="returnToSimulHomepage">Simul මුල් පිටුව වෙත ආපසු යන්න</string>
+  <string name="aboutSimul">Simuls වල​ ක්‍රීඩකයන් කිහිප දෙනෙකුට එකවර මුහුණ දෙන තනි ක්‍රීඩකයෙකු ඇතුළත් වේ.</string>
   <string name="aboutSimulImage">ප්‍රතිවාදීන් 50 දෙනෙකුගෙන්, ෆිෂර් තරඟ 47ක් ජයග්‍රහණය කළේය, 2ක් ජය පරාජයෙන් තොරව සහ 1ක් පරාජය විය.</string>
   <string name="aboutSimulRealLife">සංකල්පය සැබෑ ලෝකයේ සිදුවීම් වලින් උපුටා ගන්නා ලදී. සැබෑ ජීවිතයේ දී, මෙයට සිමියුල් ධාරකය එක් ඇදීමක් කිරීම සඳහා මේසයෙන් මේසයට ගමන් කිරීම ඇතුළත් වේ.</string>
   <string name="aboutSimulRules">සිමියුලය ආරම්භ වන විට, සෑම ක්‍රීඩකයෙක්ම සත්කාරකයා සමඟ ක්‍රීඩාවක් ආරම්භ කරයි. සියලුම ක්‍රීඩා සම්පූර්ණ වූ විට සිමියුලය අවසන් වේ.</string>
@@ -577,4 +695,20 @@ You are playing chess.</string>
   <string name="simulAddExtraTime">ඔබට සිමියුලය සමඟ සාර්ථකව කටයුතු කිරීමට උපකාර කිරීම සඳහා ඔබේ ඔරලෝසුවට අමතර ආරම්භක වේලාවක් එක් කළ හැක.</string>
   <string name="simulHostExtraTime">අතිරේක ආරම්භක ඔරලෝසු කාලය සත්කාරකත්වය</string>
   <string name="simulAddExtraTimePerPlayer">සිමියුලයට සම්බන්ධ වන එක් එක් ක්‍රීඩකයා සඳහා ඔබේ ඔරලෝසුවට ආරම්භක වේලාව එක් කරන්න.</string>
+  <string name="simulHostExtraTimePerPlayer">සත්කාරකයාට​ බැගින් ලැබෙන​ එක් ක්‍රීඩකයෙකුට අමතර ඔරලෝසු කාලය</string>
+  <string name="lichessTournaments">Lichess tournaments</string>
+  <string name="tournamentFAQ">තරඟාවලිය FAQ</string>
+  <string name="timeBeforeTournamentStarts">තරඟාවලිය</string>
+  <string name="accuracy">නිවරදිතවය</string>
+  <string name="keyboardShortcuts">යතුරු පුවරු කෙටි පිවිසුම්</string>
+  <string name="keyMoveBackwardOrForward">ඉස්සරහට/පිටුපසට අදින්න</string>
+  <string name="keyGoToStartOrEnd">පටන් ගැනීමට/අවසානයට යන්න</string>
+  <string name="keyRequestComputerAnalysis">විශ්ලේෂණය ඉල්ලුම් කරන්න</string>
+  <string name="keyNextLearnFromYourMistakes">ඊලඟට (ඔබේ වැරදීම්වලින් ඉගෙන ගන්න)</string>
+  <string name="keyNextBlunder">ඊලඟ වරද</string>
+  <string name="keyNextMistake">ඊලඟ වැරැද්ද</string>
+  <string name="keyNextInaccuracy">ඊලඟ අතපසු වීම</string>
+  <string name="keyPreviousBranch">පෙර ශාඛාව</string>
+  <string name="weeklyPerfTypeRatingDistribution">සතිපතා %s ශ්‍රේණි බෙදා හැරීම</string>
+  <string name="pieceSet">ඉත්තන් පෙළ</string>
 </resources>

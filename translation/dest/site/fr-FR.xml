@@ -70,6 +70,8 @@
   <string name="promoteVariation">Promouvoir la variante</string>
   <string name="makeMainLine">En faire la variante principale</string>
   <string name="deleteFromHere">Supprimer à partir d\'ici</string>
+  <string name="collapseVariations">Fermer les variantes</string>
+  <string name="expandVariations">Afficher les variantes</string>
   <string name="forceVariation">Forcer la variante</string>
   <string name="copyVariationPgn">Copier le PGN de la variante</string>
   <string name="move">Coup</string>
@@ -114,7 +116,6 @@
   <string name="replayMode">Rejouer la partie</string>
   <string name="realtimeReplay">Temps réel</string>
   <string name="byCPL">Par erreurs</string>
-  <string name="openStudy">Ouvrir l\'analyse</string>
   <string name="enable">Activée</string>
   <string name="bestMoveArrow">Flèche du meilleur coup</string>
   <string name="showVariationArrows">Afficher les flèches de variantes</string>
@@ -124,7 +125,6 @@
   <string name="memory">Mémoire</string>
   <string name="infiniteAnalysis">Analyse infinie</string>
   <string name="removesTheDepthLimit">Désactive la profondeur limitée et fait chauffer votre ordinateur</string>
-  <string name="engineManager">Gestionnaire de moteur d\'analyse</string>
   <string name="blunder">Gaffe</string>
   <string name="mistake">Erreur</string>
   <string name="inaccuracy">Imprécision</string>
@@ -132,13 +132,25 @@
     <item quantity="one">%s gaffe</item>
     <item quantity="other">%s gaffes</item>
   </plurals>
+  <plurals name="numberBlunders">
+    <item quantity="one">%s Erreur grave</item>
+    <item quantity="other">%s Erreurs graves</item>
+  </plurals>
   <plurals name="nbMistakes">
     <item quantity="one">%s erreur</item>
     <item quantity="other">%s erreurs</item>
   </plurals>
+  <plurals name="numberMistakes">
+    <item quantity="one">%s Erreur</item>
+    <item quantity="other">%s Erreurs</item>
+  </plurals>
   <plurals name="nbInaccuracies">
     <item quantity="one">%s imprécision</item>
     <item quantity="other">%s imprécisions</item>
+  </plurals>
+  <plurals name="numberInaccuracies">
+    <item quantity="one">%s Imprécision</item>
+    <item quantity="other">%s Imprécisions</item>
   </plurals>
   <string name="moveTimes">Temps par coup</string>
   <string name="flipBoard">Tourner l\'échiquier</string>
@@ -178,6 +190,7 @@
   <string name="latestForumPosts">Derniers posts du forum</string>
   <string name="players">Joueurs</string>
   <string name="friends">Amis</string>
+  <string name="otherPlayers">autres joueurs</string>
   <string name="discussions">Discussions</string>
   <string name="today">Aujourd\'hui</string>
   <string name="yesterday">Hier</string>
@@ -257,6 +270,7 @@
     <item quantity="one">%s partie avec vous</item>
     <item quantity="other">%s parties avec vous</item>
   </plurals>
+  <string name="ok">OK</string>
   <string name="cancel">Annuler</string>
   <string name="whiteTimeOut">Temps blanc écoulé</string>
   <string name="blackTimeOut">Temps noir écoulé</string>
@@ -276,6 +290,7 @@
   <string name="abortGame">Annuler la partie</string>
   <string name="gameAborted">Partie annulée</string>
   <string name="standard">Standard</string>
+  <string name="customPosition">Position personnalisée</string>
   <string name="unlimited">Illimité</string>
   <string name="mode">Mode</string>
   <string name="casual">Amical</string>
@@ -432,7 +447,6 @@
   <string name="block">Bloquer</string>
   <string name="blocked">Bloqué</string>
   <string name="unblock">Débloquer</string>
-  <string name="followsYou">Vous suit</string>
   <string name="xStartedFollowingY">%1$s a suivi %2$s</string>
   <plurals name="nbFollowers">
     <item quantity="one">%s suiveur</item>
@@ -464,9 +478,6 @@
   <string name="safeTournamentName">Choisissez un sage nom pour le tournoi.</string>
   <string name="inappropriateNameWarning">Toute conduite inappropriée aboutira à la fermeture de votre compte.</string>
   <string name="emptyTournamentName">Laissez vide pour que le tournoi soit nommé d\'après le nom d\'un grand maître.</string>
-  <string name="recommendNotTouching">Nous recommandons de ne pas modifier cela.</string>
-  <string name="fewerPlayers">Si vous définissez des conditions d\'admission, votre tournoi aura moins de joueurs.</string>
-  <string name="showAdvancedSettings">Afficher les paramètres avancés</string>
   <string name="makePrivateTournament">Rendre le tournoi privé et en restreindre l\'accès avec un mot de passe</string>
   <string name="join">Rejoindre</string>
   <string name="withdraw">Renoncer</string>
@@ -506,8 +517,7 @@
   <string name="ifNoneLeaveEmpty">Sinon, laissez vide</string>
   <string name="profile">Profil</string>
   <string name="editProfile">Modifier le profil</string>
-  <string name="firstName">Prénom</string>
-  <string name="lastName">Nom</string>
+  <string name="realName">Nom réel</string>
   <string name="setFlair">Choisir votre émoji</string>
   <string name="flair">Émoji</string>
   <string name="youCanHideFlair">Un paramètre permet de cacher les émojis des utilisateurs sur tout le site.</string>
@@ -531,13 +541,15 @@
   <string name="automaticallyProceedToNextGameAfterMoving">Aller automatiquement à la prochaine partie après chaque coup</string>
   <string name="autoSwitch">Changement automatique</string>
   <string name="puzzles">Problèmes</string>
-  <string name="tournamentWinners">Vainqueurs de tournois</string>
+  <string name="onlineBots">Bots en ligne</string>
   <string name="name">Nom</string>
   <string name="description">Description</string>
   <string name="descPrivate">Description privée</string>
   <string name="descPrivateHelp">Texte que seuls les membres de l\'équipe verront. Si utilisé, remplace la description publique pour les membres de l\'équipe.</string>
   <string name="no">Non</string>
   <string name="yes">Oui</string>
+  <string name="website">Site Web</string>
+  <string name="mobile">Appli mobile</string>
   <string name="help">Aide :</string>
   <string name="createANewTopic">Créer un nouveau sujet</string>
   <string name="topics">Sujets</string>
@@ -554,11 +566,11 @@
   <string name="reason">Motif</string>
   <string name="whatIsIheMatter">Quel est le problème ?</string>
   <string name="cheat">Triche</string>
-  <string name="insult">Insulte</string>
   <string name="troll">Troll</string>
-  <string name="ratingManipulation">Manipulation du classement</string>
   <string name="other">Autre</string>
-  <string name="reportDescriptionHelp">Copiez le(s) lien(s) vers les parties et expliquez en quoi le comportement de cet utilisateur est inapproprié. Ne dites pas juste \"il triche\", mais expliquez comment vous êtes arrivé à cette conclusion. Votre rapport sera traité plus vite s\'il est écrit en anglais.</string>
+  <string name="reportCheatBoostHelp">Collez le lien vers la ou les parties et expliquez pourquoi le comportement de l\'utilisateur est inapproprié. Ne dites pas juste « il triche »; expliquez comment vous êtes arrivé à cette conclusion.</string>
+  <string name="reportUsernameHelp">Expliquez pourquoi ce nom d\'utilisateur est offensant. Ne dites pas simplement qu\'il est choquant ou inapproprié; expliquez comment vous êtes arrivé à cette conclusion, surtout si l\'insulte n\'est pas claire, n\'est pas en anglais, est en argot ou a une connotation historique ou culturelle.</string>
+  <string name="reportProcessedFasterInEnglish">Votre rapport sera traité plus rapidement s\'il est rédigé en anglais.</string>
   <string name="error.provideOneCheatedGameLink">Merci de fournir au moins un lien vers une partie où il y a eu triche.</string>
   <string name="by">par %s</string>
   <string name="importedByX">Importée par %s</string>
@@ -591,6 +603,7 @@
   <string name="slow">Lente</string>
   <string name="insideTheBoard">Sur l\'échiquier</string>
   <string name="outsideTheBoard">En dehors de l\'échiquier</string>
+  <string name="allSquaresOfTheBoard">Toutes les cases</string>
   <string name="onSlowGames">Durant les parties lentes</string>
   <string name="always">Toujours</string>
   <string name="never">Jamais</string>
@@ -771,6 +784,7 @@
   <string name="onlineAndOfflinePlay">Jouez en ligne ou hors-ligne</string>
   <string name="viewTheSolution">Regarder la solution</string>
   <string name="followAndChallengeFriends">Suivez et défiez vos amis !</string>
+  <string name="noChallenges">Pas de défis.</string>
   <plurals name="availableInNbLanguages">
     <item quantity="one">Disponible en %s langue !</item>
     <item quantity="other">Disponible en %s langues !</item>
@@ -790,9 +804,12 @@
   <string name="transparent">Transparent</string>
   <string name="deviceTheme">Thème de l\'appareil</string>
   <string name="backgroundImageUrl">URL de l\'image de fond :</string>
-  <string name="boardGeometry">Forme de l\'échiquier</string>
-  <string name="boardTheme">Thème de l\'échiquier</string>
-  <string name="boardSize">Taille de l\'échiquier</string>
+  <string name="board">Échiquier</string>
+  <string name="size">Taille</string>
+  <string name="opacity">Opacité</string>
+  <string name="brightness">Luminosité</string>
+  <string name="hue">Teinte</string>
+  <string name="boardReset">Rétablir les couleurs par défaut</string>
   <string name="pieceSet">Jeu de pièces</string>
   <string name="embedInYourWebsite">Intégrer dans votre site web</string>
   <string name="usernameAlreadyUsed">Ce nom d\'utilisateur existe déjà, merci d\'en choisir un autre.</string>
@@ -928,8 +945,8 @@
   <string name="timeAlmostUp">Vous n\'avez presque plus de temps!</string>
   <string name="clickToRevealEmailAddress">[Cliquer pour révéler l\'adresse courriel]</string>
   <string name="download">Télécharger</string>
-  <string name="coachManager">Configuration des paramètres Coach</string>
-  <string name="streamerManager">Configuration des paramètres Streamer</string>
+  <string name="coachManager">Config. param. coach</string>
+  <string name="streamerManager">Config. param. streamer</string>
   <string name="cancelTournament">Annuler le tournoi</string>
   <string name="tournDescription">Description du tournoi</string>
   <string name="tournDescriptionHelp">Quelque chose de spécial à dire aux participants ? Soyez bref. Des liens Markdown sont disponibles : [name](https://url)</string>
@@ -940,8 +957,6 @@ et ont un impact sur le classement des joueurs</string>
   <string name="minimumRatedGames">Nombre minimum de parties classées</string>
   <string name="minimumRating">Classement minimal</string>
   <string name="maximumWeeklyRating">Classement hebdomadaire maximal</string>
-  <string name="onlyTitled">Joueurs titrés seulement</string>
-  <string name="onlyTitledHelp">Titre officiel requis pour participer à un tournoi</string>
   <string name="positionInputHelp">Collez un FEN valide pour commencer chaque partie à partir d\'une position donnée.
 Cela ne fonctionne que pour les parties normales, pas avec les variantes.
 Vous pouvez utiliser le %s pour créer une position FEN puis la coller ici.
@@ -969,9 +984,7 @@ Laissez vide pour commencer les parties à partir de la position initiale normal
   <string name="focusChat">Priorité au salon de discussion</string>
   <string name="showHelpDialog">Afficher cette boîte de dialogue</string>
   <string name="reopenYourAccount">Rouvrir votre compte</string>
-  <string name="closedAccountChangedMind">Si vous avez fermé votre compte, mais que vous avez ensuite changé d\'avis, vous avez une chance de récupérer votre compte.</string>
-  <string name="onlyWorksOnce">Cela ne fonctionnera qu\'une seule fois.</string>
-  <string name="cantDoThisTwice">Si vous fermez votre compte une seconde fois, il n\'y aura aucun moyen de le récupérer.</string>
+  <string name="reopenYourAccountDescription">Vous avez fermé votre compte, mais vous avez changé d\'idée? Vous avez une chance de le récupérer.</string>
   <string name="emailAssociatedToaccount">Adresse courriel associée à votre compte</string>
   <string name="sentEmailWithLink">Nous vous avons envoyé un courriel avec un lien.</string>
   <string name="tournamentEntryCode">Code d\'entrée du tournoi</string>
@@ -990,4 +1003,6 @@ Laissez vide pour commencer les parties à partir de la position initiale normal
   <string name="showMeEverything">Tout afficher</string>
   <string name="lichessPatronInfo">Lichess est une association à but non lucratif et un logiciel open source entièrement libre.
 Tous les coûts d\'exploitation, le développement et le contenu sont financés uniquement par les dons des utilisateurs.</string>
+  <string name="nothingToSeeHere">Rien à voir ici pour le moment.</string>
+  <string name="stats">Statistiques</string>
 </resources>

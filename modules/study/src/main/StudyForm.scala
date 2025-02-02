@@ -7,8 +7,7 @@ import play.api.data.*
 import play.api.data.Forms.*
 import play.api.data.format.Formatter
 
-import lila.common.Form.{ cleanNonEmptyText, formatter, into, defaulting, given }
-import lila.common.config.Max
+import lila.common.Form.{ cleanNonEmptyText, defaulting, formatter, into, given }
 
 object StudyForm:
 
@@ -34,7 +33,7 @@ object StudyForm:
     case class Data(
         gameId: Option[GameId] = None,
         orientation: Option[ChapterMaker.Orientation] = None,
-        fen: Option[Fen.Epd] = None,
+        fen: Option[Fen.Full] = None,
         pgnStr: Option[PgnStr] = None,
         variant: Option[Variant] = None,
         asStr: Option[String] = None
@@ -85,11 +84,11 @@ object StudyForm:
     ):
 
       def toChapterDatas: List[ChapterMaker.Data] =
-        val pgns = MultiPgn.split(pgn, max = Max(32)).value
+        val pgns = MultiPgn.split(pgn, max = Study.maxChapters).value
         pgns.mapWithIndex: (onePgn, index) =>
           ChapterMaker.Data(
             // only the first chapter can be named
-            name = StudyChapterName((index == 0) so name),
+            name = StudyChapterName((index == 0).so(name)),
             variant = variant,
             pgn = onePgn.some,
             orientation = orientation | ChapterMaker.Orientation.Auto,
@@ -101,4 +100,4 @@ object StudyForm:
   def topicsForm = Form(single("topics" -> text))
 
   def topicsForm(topics: StudyTopics) =
-    Form(single("topics" -> text)) fill topics.value.mkString(",")
+    Form(single("topics" -> text)).fill(topics.value.mkString(","))

@@ -74,6 +74,8 @@
   <string name="promoteVariation">رفع سلسلة الحركات</string>
   <string name="makeMainLine">رفع الى التسلسل الرئيسي</string>
   <string name="deleteFromHere">احذف من هنا</string>
+  <string name="collapseVariations">أعلى</string>
+  <string name="expandVariations">وسع التفريع</string>
   <string name="forceVariation">فرض التسلسل</string>
   <string name="copyVariationPgn">انسخ التفريع بصيغة PGN</string>
   <string name="move">التقلة</string>
@@ -122,7 +124,6 @@
   <string name="replayMode">نمط إعادة العرض</string>
   <string name="realtimeReplay">ذات الوقت</string>
   <string name="byCPL">بالاثارة</string>
-  <string name="openStudy">فتح دراسة</string>
   <string name="enable">تفعيل</string>
   <string name="bestMoveArrow">سهم أفضل نقلة</string>
   <string name="showVariationArrows">أظهر سلسلة النقلات المرشحة</string>
@@ -132,7 +133,6 @@
   <string name="memory">الذاكرة</string>
   <string name="infiniteAnalysis">تحليل لانهائي</string>
   <string name="removesTheDepthLimit">التحليل لأبعد عمق، وابقاء حاسوبك نشطًا</string>
-  <string name="engineManager">مدير المحركات</string>
   <string name="blunder">خطأ فادح</string>
   <string name="mistake">خطأ</string>
   <string name="inaccuracy">غير دقيق</string>
@@ -144,6 +144,14 @@
     <item quantity="many">%s غلطات</item>
     <item quantity="other">%s غلطات</item>
   </plurals>
+  <plurals name="numberBlunders">
+    <item quantity="zero">%s غلطة</item>
+    <item quantity="one">%s غلطة</item>
+    <item quantity="two">%s غلطة</item>
+    <item quantity="few">%s غلطة</item>
+    <item quantity="many">%s غلطة</item>
+    <item quantity="other">%s غلطات</item>
+  </plurals>
   <plurals name="nbMistakes">
     <item quantity="zero">%s خطأ</item>
     <item quantity="one">%s خطأ</item>
@@ -152,7 +160,23 @@
     <item quantity="many">%s أخطاء</item>
     <item quantity="other">%s أخطاء</item>
   </plurals>
+  <plurals name="numberMistakes">
+    <item quantity="zero">%s خطأ</item>
+    <item quantity="one">%s خطأ</item>
+    <item quantity="two">%s خطأ</item>
+    <item quantity="few">%s خطأ</item>
+    <item quantity="many">%s خطأ</item>
+    <item quantity="other">%s أخطاء</item>
+  </plurals>
   <plurals name="nbInaccuracies">
+    <item quantity="zero">%s غموض</item>
+    <item quantity="one">%s غموض</item>
+    <item quantity="two">%s غموض</item>
+    <item quantity="few">%s غموض</item>
+    <item quantity="many">%s غموض</item>
+    <item quantity="other">%s غموض</item>
+  </plurals>
+  <plurals name="numberInaccuracies">
     <item quantity="zero">%s غموض</item>
     <item quantity="one">%s غموض</item>
     <item quantity="two">%s غموض</item>
@@ -214,6 +238,7 @@
   <string name="latestForumPosts">آخر منشورات المنتدى</string>
   <string name="players">اللاعبون</string>
   <string name="friends">الأصدقاء</string>
+  <string name="otherPlayers">لاعبون آخرون</string>
   <string name="discussions">المحادثات</string>
   <string name="today">اليوم</string>
   <string name="yesterday">الأمس</string>
@@ -317,6 +342,7 @@
     <item quantity="many">%s مباراة معك</item>
     <item quantity="other">%s مباراة معك</item>
   </plurals>
+  <string name="ok">حسناً</string>
   <string name="cancel">إلغاء</string>
   <string name="whiteTimeOut">انتهى وقت الأبيض</string>
   <string name="blackTimeOut">انتهى وقت الأسود</string>
@@ -336,6 +362,7 @@
   <string name="abortGame">إلغاء اللعبة</string>
   <string name="gameAborted">اللعبة ألغيت</string>
   <string name="standard">عادي</string>
+  <string name="customPosition">موضع مخصص</string>
   <string name="unlimited">غير محدود</string>
   <string name="mode">مقيمة أو غير مقيمة</string>
   <string name="casual">غير مقيّمة</string>
@@ -552,7 +579,6 @@
   <string name="block">حظر</string>
   <string name="blocked">محظور</string>
   <string name="unblock">إلغاء الحظر</string>
-  <string name="followsYou">يتابعك</string>
   <string name="xStartedFollowingY">%1$s بدأ متابعة %2$s</string>
   <plurals name="nbFollowers">
     <item quantity="zero">%s متابع</item>
@@ -596,9 +622,6 @@
   <string name="safeTournamentName">اختر اسماً ملائماً لهذه البطولة.</string>
   <string name="inappropriateNameWarning">أي شيء غير مناسب ولو حتى قليلاً يمكن أن يعرّض حسابك للإغلاق.</string>
   <string name="emptyTournamentName">أترك الحقل فارغاً وسيتم تسمية البطولة باسم غراند ماستر عشوائي.</string>
-  <string name="recommendNotTouching">نوصي بعدم تغيير هذه الخيارات.</string>
-  <string name="fewerPlayers">إذا حددت شروطَ دخولٍ للبطولة فقد يكون لديك لاعبون أقل.</string>
-  <string name="showAdvancedSettings">إظهار الإعدادات المتقدمة</string>
   <string name="makePrivateTournament">جعل البطولة خاصة، وتقييد الوصول بكلمة مرور</string>
   <string name="join">إشترك</string>
   <string name="withdraw">انسحاب</string>
@@ -638,8 +661,7 @@
   <string name="ifNoneLeaveEmpty">إذا لم يوجد، أتركه فارغًا</string>
   <string name="profile">الملف الشخصي</string>
   <string name="editProfile">حرر الملف الشخصي</string>
-  <string name="firstName">الاسم الأول</string>
-  <string name="lastName">اسم العائلة</string>
+  <string name="realName">الاسم الحقيقي</string>
   <string name="setFlair">اختيار الشارة</string>
   <string name="flair">الشارة</string>
   <string name="youCanHideFlair">يستخدم هذا الإعداد لإخفاء جميع شارات المستخدمين في الموقع.</string>
@@ -667,13 +689,15 @@
   <string name="automaticallyProceedToNextGameAfterMoving">الإنتقال تلقائيًا للمباراة التالية بعد النقل</string>
   <string name="autoSwitch">تبديل تلقائي</string>
   <string name="puzzles">الألغاز</string>
-  <string name="tournamentWinners">الفائزون بالبطولات</string>
+  <string name="onlineBots">الروبوتات المتصلة</string>
   <string name="name">الاسم</string>
   <string name="description">الوصف</string>
   <string name="descPrivate">وصف خاص</string>
   <string name="descPrivateHelp">هذا النص سيراه فقط أعضاء الفريق. في حالة ضبطه، سيحل محل الوصف العام لأعضاء الفريق.</string>
   <string name="no">لا</string>
   <string name="yes">نعم</string>
+  <string name="website">الموقع</string>
+  <string name="mobile">الهاتف المحمول</string>
   <string name="help">مساعدة:</string>
   <string name="createANewTopic">إنشاء موضوع جديد</string>
   <string name="topics">المواضيع</string>
@@ -690,11 +714,14 @@
   <string name="reason">السبب</string>
   <string name="whatIsIheMatter">ما الأمر؟</string>
   <string name="cheat">غش</string>
-  <string name="insult">إهانة</string>
   <string name="troll">إزعاج</string>
-  <string name="ratingManipulation">تلاعب بالتقييم</string>
   <string name="other">أخرى</string>
-  <string name="reportDescriptionHelp">الصق رابط المباراة (المباريات) واشرح بالتفصيل المشكلة في تصرف هذا المستحدم. لا تقل فقط \"انهم يغشون\"، ولكن اشرح لنا سبب استنتاجك. سيكون الرد أسرع إن كتبت بالإنكليزية.</string>
+  <string name="reportCheatBoostHelp">هذه رسالة عامية وليست مخصصة لبلاغات الغش. وهي تحاول تعليم اللاعب كيفية كتابة بلاغ مفيد لفريق لي-تشيس. و أيضا تطلب إثبات.
+
+تظهر على صفحة \"بلغ مستخدم\"
+https://lichess. org/report.</string>
+  <string name="reportUsernameHelp">اشرح ما المسيء في اسم المستخدم هذا. لا تقل فقط \"إنه مسيء/غير مناسب\"، بل أخبرنا كيف توصلت إلى هذا الاستنتاج، خاصة إذا كانت الإهانة غير واضحة، أو ليست باللغة الإنجليزية، أو كانت باللغة العامية، أو كانت إشارة تاريخية/ثقافية.</string>
+  <string name="reportProcessedFasterInEnglish">سيتم معالجة بلاغك بشكل أسرع إذا تمت كتابته باللغة الإنجليزية.</string>
   <string name="error.provideOneCheatedGameLink">برجاء تقديم رابط واحد علي الأقل لمباراة حدث فيها غش.</string>
   <string name="by">كتبها %s</string>
   <string name="importedByX">استيراد \'%s\'</string>
@@ -727,6 +754,7 @@
   <string name="slow">بطيء</string>
   <string name="insideTheBoard">داخل الرقعة</string>
   <string name="outsideTheBoard">خارج الرقعة</string>
+  <string name="allSquaresOfTheBoard">جميع مربعات اللوح</string>
   <string name="onSlowGames">في المباريات البطيئة</string>
   <string name="always">دائماً</string>
   <string name="never">إطلاقا</string>
@@ -853,6 +881,7 @@
   <string name="toggleVariationArrows">تبديل أسهم النقلات المرشحة</string>
   <string name="cyclePreviousOrNextVariation">الدورة السابقة/التفريع التالي</string>
   <string name="toggleGlyphAnnotations">تبديل الرموز التوضيحية</string>
+  <string name="togglePositionAnnotations">تبديل تحليل الموقف</string>
   <string name="variationArrowsInfo">أسمهم النقلات تسمح لك بلعبها دون استخدام قائمة النقلات المرشحة.</string>
   <string name="playSelectedMove">لعب النقلة المحددة</string>
   <string name="newTournament">مسابقة جديدة</string>
@@ -945,9 +974,12 @@
   <string name="transparent">شفّاف</string>
   <string name="deviceTheme">مظهر الجهاز</string>
   <string name="backgroundImageUrl">رابط صورة الخلفية:</string>
-  <string name="boardGeometry">شكل الرقعة</string>
-  <string name="boardTheme">مربعات الرقعة</string>
-  <string name="boardSize">حجم الرقعة</string>
+  <string name="board">اللوحة</string>
+  <string name="size">الحجم</string>
+  <string name="opacity">الشفافيّة</string>
+  <string name="brightness">السطوع</string>
+  <string name="hue">التدرج اللوني</string>
+  <string name="boardReset">إعادة تعيين الألوان إلى الافتراضي</string>
   <string name="pieceSet">مجموعة القطع</string>
   <string name="embedInYourWebsite">تضمين في موقع الويب الخاص بك</string>
   <string name="usernameAlreadyUsed">اسم المستخدم الذي اخترته موجود بالفعل، الرجاء كتابة اسم آخر.</string>
@@ -1107,8 +1139,6 @@
   <string name="minimumRatedGames">الحد الأدنى للالعاب المصنفة</string>
   <string name="minimumRating">أقل تصنيف</string>
   <string name="maximumWeeklyRating">الحد الاقصى للتصنيف الاسبوعي</string>
-  <string name="onlyTitled">فقط اللاعبين حملة الألقاب</string>
-  <string name="onlyTitledHelp">يتطلب لقب رسمي للمشاركة</string>
   <string name="positionInputHelp">لصق FEN صالح لبدء كل لعبة من موقع معين.
 إنه يعمل فقط للألعاب العادية، وليس مع المتغيرات.
 يمكنك استخدام %s لإنشاء موضع FEN، ثم لصقه هنا.
@@ -1136,9 +1166,6 @@
   <string name="focusChat">تركيز</string>
   <string name="showHelpDialog">إظهار رسالة المساعدة هذه</string>
   <string name="reopenYourAccount">اعادة فتح حسابك</string>
-  <string name="closedAccountChangedMind">إذا كنت قد أغلقت حسابك، و أبدلت رأيك، لديك فرصة واحدة لاستعادة الحساب.</string>
-  <string name="onlyWorksOnce">سيعمل هذا لمرة واحدة فقط</string>
-  <string name="cantDoThisTwice">إذا أغلقت حسابك مرة ثانية فليس من الممكن استعادة حسابك مرة أخرى.</string>
   <string name="emailAssociatedToaccount">البريد الالكتروني مربوط بالحساب</string>
   <string name="sentEmailWithLink">أرسالنا لك ايميل يحتوي على رابط.</string>
   <string name="tournamentEntryCode">رمز دخول البطولة</string>
@@ -1157,4 +1184,6 @@
   <string name="showMeEverything">اظهر لي كل شيء</string>
   <string name="lichessPatronInfo">Lichess هو موقع خيري و مجاني بشكل كامل ومفتوح المصدر.
 كافة التكاليف التشغيلية و التطويرية و المحتوى يتم الحصول عليه من قبل تبرعات المستخدمين.</string>
+  <string name="nothingToSeeHere">لا يوجد شيء يمكن رؤيته هنا في الوقت الحالي.</string>
+  <string name="stats">الإحصائيات</string>
 </resources>

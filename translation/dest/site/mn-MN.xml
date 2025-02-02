@@ -108,7 +108,6 @@
   <string name="replayMode">Дахин тоглуулах хэлбэр</string>
   <string name="realtimeReplay">Бодит</string>
   <string name="byCPL">Онцгой</string>
-  <string name="openStudy">Хичээл нээх</string>
   <string name="enable">Нээх</string>
   <string name="bestMoveArrow">Хамгийн сайн нүүдэл харуулах сум</string>
   <string name="showVariationArrows">Хувилбарыг сумаар харуулах</string>
@@ -124,6 +123,10 @@
   <plurals name="nbInaccuracies">
     <item quantity="one">%s-ийн оновчгүй нүүдэл</item>
     <item quantity="other">%s-ийн оновчгүй нүүдэл</item>
+  </plurals>
+  <plurals name="numberInaccuracies">
+    <item quantity="one">%s-Ийн оновчгүй нүүдэл</item>
+    <item quantity="other">%s-Ийн оновчгүй нүүдэл</item>
   </plurals>
   <string name="moveTimes">Нүүдлийн хугацаа</string>
   <string name="flipBoard">Талуудын байрлалыг солих</string>
@@ -395,7 +398,6 @@
   <string name="block">Энэ гишүүнд хориг тавих</string>
   <string name="blocked">Энэ гишүүнд хориг тавилаа</string>
   <string name="unblock">Энэ гишүүнд тавьсан хоригийг цуцлах</string>
-  <string name="followsYou">Таныг дагаж байгаа</string>
   <string name="xStartedFollowingY">%1$s дараахь гишүүнийг дагаж эхэллээ: %2$s</string>
   <plurals name="nbFollowers">
     <item quantity="one">%s гишүүн дагадаг</item>
@@ -427,9 +429,6 @@
   <string name="safeTournamentName">Тэмцээний хувьд маш аюулгүй нэр сонгоно уу.</string>
   <string name="inappropriateNameWarning">Бүр бага зэрэг зохисгүй зүйл таны данс хаагдах боломжтой болно.</string>
   <string name="emptyTournamentName">Тэмцээний Grandmaster-ийн дараа хоосон орхи.</string>
-  <string name="recommendNotTouching">Бид эдгээрийг хөндөхгүй байхыг зөвлөж байна.</string>
-  <string name="fewerPlayers">Хэрэв та орох нөхцөлийг тохируулсан бол таны тэмцээн цөөхөн тоглогчтой болно.</string>
-  <string name="showAdvancedSettings">Нарийвчилсан тохиргоог харуулах</string>
   <string name="makePrivateTournament">Хувийн тур нууц үгтэйгээр үүсгэх</string>
   <string name="join">Нэгдэх</string>
   <string name="withdraw">Тэмцээнийг орхих</string>
@@ -469,8 +468,6 @@
   <string name="ifNoneLeaveEmpty">Байхгүй бол хоосон орхи</string>
   <string name="profile">Гишүүний хуудас</string>
   <string name="editProfile">Танилцуулга хуудсаа засварлах</string>
-  <string name="firstName">Өөрийн нэр</string>
-  <string name="lastName">Эцгийн нэр</string>
   <string name="setFlair">Нэрнийхээ хажууг чимэглэх</string>
   <string name="flair">Эможи</string>
   <string name="youCanHideFlair">Сайтанд байгаа бүх нэрний хажуу зүйлсийг нуух тохиргоо байдгийг санаарай.</string>
@@ -493,7 +490,6 @@
   <string name="automaticallyProceedToNextGameAfterMoving">Нүүсний дараа дараагийн тоглолт руу шууд шилжих</string>
   <string name="autoSwitch">Автоматаар шилжих</string>
   <string name="puzzles">Таавар бодлого</string>
-  <string name="tournamentWinners">Ялагчид</string>
   <string name="name">Нэр</string>
   <string name="description">Багийн танилцуулга</string>
   <string name="descPrivate">Хувийн тодорхойлолт</string>
@@ -516,11 +512,8 @@
   <string name="reason">Шалтгаан</string>
   <string name="whatIsIheMatter">Шалтгаан?</string>
   <string name="cheat">Булхайцсан</string>
-  <string name="insult">Доромжилсон</string>
   <string name="troll">Тохуурхсан</string>
-  <string name="ratingManipulation">Үнэлгээгээ гуйвуулах</string>
   <string name="other">Өөр шалтаан</string>
-  <string name="reportDescriptionHelp">Та энэ гишүүнтэй тоглосон өргийнхөө холбоос хаягыг энд хуулж тавиад зүй бус үйлдлийнх нь талаар тайлбар бичнэ үү. Та хэрхэн энэ гишүүнийг булхайцсан үйлдэл хийсэн гэсэн дүгнэлтэд хүрсэн бэ? Хэрэв та гомдлоо англи хэлээр мэдүүлвэл бид илүү түргэн шуурхай арга хэмжээ авах болно.</string>
   <string name="error.provideOneCheatedGameLink">Тоглоомын дор хаяж нэг холбоосыг оруулна уу.</string>
   <string name="by">Бичлэг бичигч: %s</string>
   <string name="thisTopicIsNowClosed">Энэ сэдэв хэлэлцэгдээд дууссан байна.</string>
@@ -719,9 +712,6 @@
   <string name="dark">Хар</string>
   <string name="transparent">Уусмал</string>
   <string name="backgroundImageUrl">Ар фонын зурагны холбоос:</string>
-  <string name="boardGeometry">Хөлгийн геометр</string>
-  <string name="boardTheme">Хөлгийн загвар</string>
-  <string name="boardSize">Хөлгийн хэмжээ</string>
   <string name="pieceSet">Дүрсний загвар</string>
   <string name="embedInYourWebsite">Вэб сайтадаа оруулах</string>
   <string name="usernameAlreadyUsed">Ийм нэртэй хэрэглэгч байна, өөр нэр ашиглана уу.</string>
@@ -829,8 +819,6 @@
   <string name="minimumRatedGames">Чансаатай өрөг бага</string>
   <string name="minimumRating">Доод хэмжээний үнэлгээ</string>
   <string name="maximumWeeklyRating">Долоо хоногийн дээд үнэлгээ</string>
-  <string name="onlyTitled">Зөвхөн цолтой тоглогч нар</string>
-  <string name="onlyTitledHelp">Тэмцээнд ороход заавал албан ёсны цол шаардлагатай</string>
   <string name="tournChat">Тэмцээний холбоо</string>
   <string name="noChat">Харилцахгүй</string>
   <string name="onlyTeamLeaders">Зөвхөн багийн удирдагчид</string>

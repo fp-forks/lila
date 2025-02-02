@@ -3,23 +3,23 @@ package lila.bot
 import chess.format.Uci
 
 import lila.common.Bus
-import lila.game.{ Game, GameRepo, Pov, Rematches }
-import lila.hub.actorApi.map.Tell
-import lila.hub.actorApi.round.{ Abort, Berserk, BotPlay, Rematch, Resign }
-import lila.round.actorApi.round.{ Draw, ResignForce, Takeback }
-import lila.user.{ User, Me }
+import lila.core.misc.map.Tell
+import lila.core.round.*
+import lila.core.shutup.PublicSource
+import lila.game.GameExt.playerCanOfferDraw
+import lila.game.{ GameRepo, Rematches }
 
 final class BotPlayer(
     chatApi: lila.chat.ChatApi,
     gameRepo: GameRepo,
     rematches: Rematches,
-    spam: lila.security.Spam
+    spam: lila.core.security.SpamApi
 )(using Executor, Scheduler):
 
-  private def clientError[A](msg: String): Fu[A] = fufail(lila.round.ClientError(msg))
+  private def clientError[A](msg: String): Fu[A] = fufail(lila.core.round.ClientError(msg))
 
   def apply(pov: Pov, uciStr: String, offeringDraw: Option[Boolean])(using me: Me): Funit =
-    lila.common.LilaFuture.delay((pov.game.hasAi so 500) millis):
+    lila.common.LilaFuture.delay((pov.game.hasAi.so(500)).millis):
       Uci(uciStr).fold(clientError[Unit](s"Invalid UCI: $uciStr")): uci =>
         lila.mon.bot.moves(me.username.value).increment()
         if !pov.isMyTurn then clientError("Not your turn, or game already over")
@@ -29,25 +29,25 @@ final class BotPlayer(
           else if !pov.player.isOfferingDraw && ~offeringDraw then offerDraw(pov)
           tellRound(pov.gameId, BotPlay(pov.playerId, uci, promise.some))
           promise.future.recover:
-            case _: lila.round.GameIsFinishedError if ~offeringDraw => ()
+            case _: lila.core.round.GameIsFinishedError if ~offeringDraw => ()
 
   def chat(gameId: GameId, d: BotForm.ChatData)(using me: Me) =
-    !spam.detect(d.text) so
-      fuccess:
+    (!spam.detect(d.text))
+      .so(fuccess:
         lila.mon.bot.chats(me.username.value).increment()
         val chatId = ChatId(if d.room == "player" then gameId.value else s"$gameId/w")
-        val source = d.room == "spectator" option {
-          lila.hub.actorApi.shutup.PublicSource.Watcher(gameId)
+        val source = (d.room == "spectator").option {
+          PublicSource.Watcher(gameId)
         }
-        chatApi.userChat.write(chatId, me, d.text, publicSource = source, _.Round)
+        chatApi.userChat.write(chatId, me, d.text, publicSource = source, _.round))
 
   def rematchAccept(id: GameId)(using Me): Fu[Boolean] = rematch(id, accept = true)
 
   def rematchDecline(id: GameId)(using Me): Fu[Boolean] = rematch(id, accept = false)
 
   private def rematch(challengeId: GameId, accept: Boolean)(using me: Me): Fu[Boolean] =
-    rematches.prevGameIdOffering(challengeId) so gameRepo.game map {
-      _.flatMap(Pov(_, me)) so { pov =>
+    rematches.prevGameIdOffering(challengeId).so(gameRepo.game).map {
+      _.flatMap(Pov(_, me)).so { pov =>
         // delay so it feels more natural
         lila.common.LilaFuture.delay(if accept then 100.millis else 1.second) {
           fuccess {
@@ -96,13 +96,16 @@ final class BotPlayer(
   def claimVictory(pov: Pov): Funit =
     pov.mightClaimWin.so:
       tellRound(pov.gameId, ResignForce(pov.playerId))
-      lila.common.LilaFuture.delay(500 millis):
-        gameRepo.finished(pov.gameId).map {
-          _.exists(_.winner.map(_.id) has pov.playerId)
-        } flatMap {
-          if _ then funit
-          else clientError("You cannot claim the win on this game")
-        }
+      lila.common.LilaFuture.delay(500.millis):
+        gameRepo
+          .finished(pov.gameId)
+          .map {
+            _.exists(_.winner.map(_.id).has(pov.playerId))
+          }
+          .flatMap {
+            if _ then funit
+            else clientError("You cannot claim the win on this game")
+          }
 
   def berserk(game: Game)(using me: Me): Boolean =
     game.berserkable.so:
