@@ -1,14 +1,15 @@
 import * as licon from 'common/licon';
-import * as button from '../view/button';
-import * as game from 'game';
-import RoundController from '../ctrl';
-import { bind, justIcon } from '../util';
-import { ClockElements, ClockController, Millis } from './clockCtrl';
-import { Hooks } from 'snabbdom';
-import { looseH as h } from 'common/snabbdom';
-import { Position } from '../interfaces';
+import { moretime } from '../view/button';
+import { playable, berserkableBy, bothPlayersHavePlayed, type Player } from 'game';
+import type RoundController from '../ctrl';
+import { justIcon } from '../util';
+import type { ClockElements, ClockController } from './clockCtrl';
+import type { Hooks } from 'snabbdom';
+import { looseH as h, type VNode, bind } from 'common/snabbdom';
+import type { Position } from '../interfaces';
+import { isAndroid, isCol1 } from 'common/device';
 
-export function renderClock(ctrl: RoundController, player: game.Player, position: Position) {
+export function renderClock(ctrl: RoundController, player: Player, position: Position): VNode {
   const clock = ctrl.clock!,
     millis = clock.millisOf(player.color),
     isPlayer = ctrl.data.player.color === player.color,
@@ -33,10 +34,10 @@ export function renderClock(ctrl: RoundController, player: game.Player, position
     clock.opts.nvui
       ? [h('div.time', { attrs: { role: 'timer' }, hook: timeHook })]
       : [
-          clock.showBar && game.bothPlayersHavePlayed(ctrl.data) ? showBar(ctrl, player.color) : undefined,
+          clock.showBar && bothPlayersHavePlayed(ctrl.data) ? showBar(ctrl, player.color) : undefined,
           h('div.time', { class: { hour: millis > 3600 * 1000 }, hook: timeHook }),
           renderBerserk(ctrl, player.color, position),
-          isPlayer ? goBerserk(ctrl) : button.moretime(ctrl),
+          isPlayer ? goBerserk(ctrl) : moretime(ctrl),
           clockSide(ctrl, player.color, position),
         ],
   );
@@ -89,8 +90,13 @@ function showBar(ctrl: RoundController, color: Color) {
       const remaining = clock.millisOf(color);
       anim.currentTime = clock.barTime - remaining;
       if (color === clock.times.activeColor) {
-        // Calling play after animations finishes restarts anim
-        if (remaining > 0) anim.play();
+        if (remaining > clock.barTime) {
+          // Player was given more time than the duration of the animation. So we update the duration to reflect this.
+          el.style.animationDuration = String(remaining / 1000) + 's';
+        } else if (remaining > 0) {
+          // Calling play after animations finishes restarts anim
+          anim.play();
+        }
       } else anim.pause();
     } else {
       clock.elements[color].bar = el;
@@ -106,9 +112,12 @@ function showBar(ctrl: RoundController, color: Color) {
   });
 }
 
-export function updateElements(clock: ClockController, els: ClockElements, millis: Millis) {
+export function updateElements(clock: ClockController, els: ClockElements, millis: Millis): void {
   if (els.time) els.time.innerHTML = formatClockTime(millis, clock.showTenths(millis), true, clock.opts.nvui);
-  if (els.bar) els.bar.style.transform = 'scale(' + clock.timeRatio(millis) + ',1)';
+  // 12/02/2025 Brave 1.74.51 android flickers the bar oninline transforms, even though .bar is display: none
+  if (els.bar)
+    if (!isAndroid() || !isCol1() || window.getComputedStyle(els.bar).display === 'block')
+      els.bar.style.transform = 'scale(' + clock.timeRatio(millis) + ',1)';
   if (els.clock) {
     const cl = els.clock.classList;
     if (millis < clock.emergMs) cl.add('emerg');
@@ -117,13 +126,13 @@ export function updateElements(clock: ClockController, els: ClockElements, milli
 }
 
 const showBerserk = (ctrl: RoundController, color: Color): boolean =>
-  !!ctrl.goneBerserk[color] && ctrl.data.game.turns <= 1 && game.playable(ctrl.data);
+  !!ctrl.goneBerserk[color] && ctrl.data.game.turns <= 1 && playable(ctrl.data);
 
 const renderBerserk = (ctrl: RoundController, color: Color, position: Position) =>
   showBerserk(ctrl, color) ? h('div.berserked.' + position, justIcon(licon.Berserk)) : null;
 
 const goBerserk = (ctrl: RoundController) => {
-  if (!game.berserkableBy(ctrl.data)) return;
+  if (!berserkableBy(ctrl.data)) return;
   if (ctrl.goneBerserk[ctrl.data.player.color]) return;
   return h('button.fbt.go-berserk', {
     attrs: { title: 'GO BERSERK! Half the time, no increment, bonus point', 'data-icon': licon.Berserk },

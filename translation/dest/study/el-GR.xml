@@ -35,7 +35,7 @@
   <string name="searchByUsername">Αναζήτηση με όνομα χρήστη</string>
   <string name="spectator">Θεατής</string>
   <string name="contributor">Συνεισφέρων</string>
-  <string name="kick">Διώξε</string>
+  <string name="kick">Αποβολή</string>
   <string name="leaveTheStudy">Αποχώρησε από αυτήν την μελέτη</string>
   <string name="youAreNowAContributor">Μπορείτε τώρα να συνεισφέρετε στην μελέτη</string>
   <string name="youAreNowASpectator">Είστε πλέον θεατής</string>
@@ -53,6 +53,8 @@
   <string name="allSyncMembersRemainOnTheSamePosition">Όλα τα συγχρονισμένα μέλη παραμένουν στην ίδια θέση</string>
   <string name="shareChanges">Διαμοιρασμός στους θεατές των αλλαγών και αποθήκευση τους στο σέρβερ</string>
   <string name="playing">Παίζονται</string>
+  <string name="showResults">Αποτελέσματα</string>
+  <string name="showEvalBar">Μπάρες αξιολόγησης</string>
   <string name="first">Πρώτη</string>
   <string name="previous">Προηγούμενη</string>
   <string name="next">Επόμενη</string>
@@ -63,7 +65,6 @@
   <string name="downloadAllGames">Λήψη όλων των παιχνιδιών</string>
   <string name="chapterPgn">PGN του κεφαλαίου</string>
   <string name="copyChapterPgn">Αντιγραφή PGN</string>
-  <string name="copyChapterPgnDescription">Αντιγραφή κεφαλαίου PGN στο πρόχειρο.</string>
   <string name="downloadGame">Λήψη παιχνιδιού</string>
   <string name="studyUrl">URL μελέτης</string>
   <string name="currentChapterUrl">Τρέχον κεφάλαιο URL</string>
@@ -102,12 +103,12 @@
   <string name="loadAPositionFromFen">Φόρτωση θέσης από FEN</string>
   <string name="loadAGameFromPgn">Φόρτωσε μια παρτίδα από PGN</string>
   <string name="automatic">Αυτόματο</string>
-  <plurals name="pasteYourPgnTextHereUpToNbGames">
+  <plurals name="pasteYourPgnTextHereUpToNbGames" comment="%s is the number of games. A study may have up to 64 chapters as of February 2025.&#10;&#10;Appears as a hint in a text box that permits the study creator to paste game(s) in PGN format into their code.&#10;&#10;The text for plurals was extended in February 2025. It is long for a placeholder hint. Because of where it is displayed, we encourage you to keep your translation short.&#10;&#10;&quot;PGN&quot; should not be translated or transliterated into a different alphabet or script.">
     <item quantity="one">Επικολλήστε το PGN εδώ, μέχρι %s παρτίδα</item>
-    <item quantity="other">Επικολλήστε το PGN εδώ, μέχρι %s παρτίδες</item>
+    <item quantity="other">Επικολλήστε παιχνίδια ως PGN εδώ. Θα δημιουργηθεί κεφάλαιο για κάθε παιχνίδι. Η μελέτη μπορεί να έχει μέχρι %s κεφάλαια.</item>
   </plurals>
   <string name="urlOfTheGame">URL παρτίδων, ένα ανά γραμμή</string>
-  <string name="loadAGameFromXOrY">Φόρτωση παρτίδων από %1$s ή %2$s</string>
+  <string name="loadAGameFromXOrY" comment="%1$s is lichess.org %2$s is chessgames.com.&#10;&#10;Users can paste URLs to games from either of these websites and import the games into their studies.">Φόρτωση παρτίδων από %1$s ή %2$s</string>
   <string name="createChapter">Δημιουργία κεφαλαίου</string>
   <string name="createStudy">Δημιουργία μελέτης</string>
   <string name="editStudy">Επεξεργασία μελέτης</string>
@@ -167,4 +168,5 @@
   <string name="playAgain">Παίξτε ξανά</string>
   <string name="whatWouldYouPlay">Τι θα παίζατε σε αυτή τη θέση;</string>
   <string name="youCompletedThisLesson">Συγχαρητήρια! Ολοκληρώσατε αυτό το μάθημα.</string>
+  <string name="perPage">%s ανά σελίδα</string>
 </resources>

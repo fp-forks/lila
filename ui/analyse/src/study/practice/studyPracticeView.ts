@@ -1,13 +1,14 @@
 import * as licon from 'common/licon';
-import { bind, bindNonPassive, MaybeVNodes } from 'common/snabbdom';
+import { bind, bindNonPassive, type MaybeVNodes } from 'common/snabbdom';
 import { spinnerVdom as spinner } from 'common/spinner';
-import { h, thunk, VNode } from 'snabbdom';
+import { h, thunk, type VNode } from 'snabbdom';
 import { toggle } from 'common/controls';
 import { richHTML } from 'common/richText';
 import { option, plural } from '../../view/util';
 import { view as descView } from '../description';
-import { StudyPracticeCtrl, StudyPracticeData } from './interfaces';
-import StudyCtrl from '../studyCtrl';
+import type { StudyPracticeData } from './interfaces';
+import type StudyCtrl from '../studyCtrl';
+import type StudyPracticeCtrl from './studyPracticeCtrl';
 
 const selector = (data: StudyPracticeData) =>
   h(
@@ -86,7 +87,6 @@ export function underboard(ctrl: StudyCtrl): MaybeVNodes {
             checked: p.autoNext(),
             change: p.autoNext,
           },
-          ctrl.trans,
           ctrl.redraw,
         ),
       ];
@@ -108,14 +108,14 @@ export function side(ctrl: StudyCtrl): VNode {
         hook: bindNonPassive('click', e => {
           e.preventDefault();
           const target = e.target as HTMLElement,
-            id = (target.parentNode as HTMLElement).getAttribute('data-id') || target.getAttribute('data-id');
+            id = (target.parentNode as HTMLElement).dataset['id'] || target.dataset['id'];
           if (id) ctrl.setChapter(id, true);
           return false;
         }),
       },
-      ctrl.chapters
-        .list()
-        .map(function (chapter) {
+      ctrl.chapters.list
+        .all()
+        .map(chapter => {
           const loading = ctrl.vm.loading && chapter.id === ctrl.vm.nextChapterId,
             active = !ctrl.vm.loading && current && current.id === chapter.id,
             completion = data.completion[chapter.id] >= 0 ? 'done' : 'ongoing';

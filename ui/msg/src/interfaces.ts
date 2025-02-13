@@ -1,6 +1,5 @@
 export interface MsgOpts {
   data: MsgData;
-  i18n: I18nDict;
 }
 export interface MsgData {
   me: Me;
@@ -30,6 +29,12 @@ export interface Convo {
   msgs: Msg[];
   relations: Relations;
   postable: boolean;
+  modDetails?: ModDetails;
+}
+
+export interface ModDetails {
+  kid: boolean;
+  openInbox: boolean;
 }
 
 export interface Relations {
@@ -54,7 +59,7 @@ export interface SearchResult {
 
 export interface Typing {
   user: string;
-  timeout: number;
+  timeout: Timeout;
 }
 
 export type Pane = 'side' | 'convo';

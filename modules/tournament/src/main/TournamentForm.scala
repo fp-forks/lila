@@ -1,14 +1,14 @@
 package lila.tournament
 
+import chess.Clock.{ IncrementSeconds, LimitSeconds }
 import chess.format.Fen
 import chess.{ Clock, Mode }
-import chess.Clock.{ LimitSeconds, IncrementSeconds }
 import play.api.data.*
 import play.api.data.Forms.*
 
 import lila.common.Form.{ *, given }
-import lila.hub.LightTeam
-import lila.user.Me
+import lila.core.perm.Granter
+import lila.core.team.LightTeam
 import lila.gathering.GatheringClock
 
 final class TournamentForm:
@@ -17,11 +17,11 @@ final class TournamentForm:
   import GatheringClock.*
 
   def create(leaderTeams: List[LightTeam], teamBattleId: Option[TeamId] = None)(using me: Me) =
-    form(leaderTeams, none) fill empty(teamBattleId)
+    form(leaderTeams, none).fill(empty(teamBattleId))
 
   private[tournament] def empty(teamBattleId: Option[TeamId] = None)(using me: Me) =
     TournamentSetup(
-      name = teamBattleId.isEmpty option me.titleUsername,
+      name = teamBattleId.isEmpty.option(me.titleUsername),
       clockTime = timeDefault,
       clockIncrement = incrementDefault,
       minutes = minuteDefault,
@@ -30,7 +30,6 @@ final class TournamentForm:
       variant = chess.variant.Standard.id.toString.some,
       position = None,
       password = None,
-      mode = none,
       rated = true.some,
       conditions = TournamentCondition.All.empty,
       teamBattleByTeam = teamBattleId,
@@ -41,7 +40,7 @@ final class TournamentForm:
     )
 
   def edit(leaderTeams: List[LightTeam], tour: Tournament)(using Me) =
-    form(leaderTeams, tour.some) fill fillFromTour(tour)
+    form(leaderTeams, tour.some).fill(fillFromTour(tour))
 
   private[tournament] def fillFromTour(tour: Tournament) =
     TournamentSetup(
@@ -52,8 +51,7 @@ final class TournamentForm:
       waitMinutes = none,
       startDate = tour.startsAt.some,
       variant = tour.variant.id.toString.some,
-      position = tour.position.map(_ into Fen.Epd),
-      mode = none,
+      position = tour.position.map(_.into(Fen.Full)),
       rated = tour.mode.rated.some,
       password = tour.password,
       conditions = tour.conditions,
@@ -77,24 +75,29 @@ final class TournamentForm:
             "Can't change time control after players have joined",
             _.speed == tour.speed || tour.nbPlayers == 0
           )
+          .verifying(
+            "Can't change bot entry condition after the tournament started",
+            _.conditions.allowsBots == tour.conditions.allowsBots || tour.isCreated
+          )
 
   private def makeMapping(leaderTeams: List[LightTeam], prev: Option[Tournament])(using me: Me) =
+    val manager       = Granter(_.ManageTournament)
+    val nameMaxLength = if me.isVerified || manager then 35 else 30
     mapping(
-      "name"           -> optional(eventName(2, 30, me.isVerifiedOrAdmin)),
+      "name"           -> optional(eventName(2, nameMaxLength, manager || me.isVerified)),
       "clockTime"      -> numberInDouble(timeChoices),
       "clockIncrement" -> numberIn(incrementChoices).into[IncrementSeconds],
       "minutes" -> {
-        if lila.security.Granter(_.ManageTournament) then number
+        if manager then number
         else numberIn(minuteChoicesKeepingCustom(prev))
       },
-      "waitMinutes" -> optional(numberIn(waitMinuteChoices)),
-      "startDate"   -> optional(inTheFuture(ISOInstantOrTimestamp.mapping)),
-      "variant"     -> optional(text.verifying(v => guessVariant(v).isDefined)),
-      "position"    -> optional(lila.common.Form.fen.playableStrict),
-      "mode"        -> optional(number.verifying(Mode.all.map(_.id) contains _)), // deprecated, use rated
-      "rated"       -> optional(boolean),
-      "password"    -> optional(cleanNonEmptyText),
-      "conditions"  -> TournamentCondition.form.all(leaderTeams),
+      "waitMinutes"      -> optional(numberIn(waitMinuteChoices)),
+      "startDate"        -> optional(inTheFuture(ISOInstantOrTimestamp.mapping)),
+      "variant"          -> optional(text.verifying(v => guessVariant(v).isDefined)),
+      "position"         -> optional(lila.common.Form.fen.playableStrict),
+      "rated"            -> optional(boolean),
+      "password"         -> optional(cleanNonEmptyText),
+      "conditions"       -> TournamentCondition.form.all(leaderTeams),
       "teamBattleByTeam" -> optional(of[TeamId].verifying(id => leaderTeams.exists(_.id == id))),
       "berserkable"      -> optional(boolean),
       "streakable"       -> optional(boolean),
@@ -102,6 +105,7 @@ final class TournamentForm:
       "hasChat"          -> optional(boolean)
     )(TournamentSetup.apply)(unapply)
       .verifying("Invalid clock", _.validClock)
+      .verifying("Invalid clock for bot games", _.validClockForBots)
       .verifying("15s and 0+1 variant games cannot be rated", _.validRatedVariant)
       .verifying("Increase tournament duration, or decrease game clock", _.sufficientDuration)
       .verifying("Reduce tournament duration, or increase game clock", _.excessiveDuration)
@@ -149,8 +153,7 @@ private[tournament] case class TournamentSetup(
     waitMinutes: Option[Int],
     startDate: Option[Instant],
     variant: Option[String],
-    position: Option[Fen.Epd],
-    mode: Option[Int], // deprecated, use rated
+    position: Option[Fen.Full],
     rated: Option[Boolean],
     password: Option[String],
     conditions: TournamentCondition.All,
@@ -163,14 +166,16 @@ private[tournament] case class TournamentSetup(
 
   def validClock = (clockTime + clockIncrement.value) > 0
 
+  def validClockForBots = !conditions.allowsBots || lila.core.game.isBotCompatible(clockConfig)
+
   def realMode =
     if realPosition.isDefined && !thematicPosition then Mode.Casual
-    else Mode(rated.orElse(mode.map(Mode.Rated.id ===)) | true)
+    else Mode(rated | true)
 
   def realVariant = variant.flatMap(TournamentForm.guessVariant) | chess.variant.Standard
 
   def realPosition: Option[Fen.Standard] = position.ifTrue(realVariant.standard).map(_.opening)
-  def thematicPosition                   = realPosition.flatMap(Thematic.byFen).isDefined
+  def thematicPosition                   = realPosition.flatMap(lila.gathering.Thematic.byFen).isDefined
 
   def clockConfig = Clock.Config(LimitSeconds((clockTime * 60).toInt), clockIncrement)
 
@@ -178,7 +183,7 @@ private[tournament] case class TournamentSetup(
 
   def validRatedVariant =
     realMode == Mode.Casual ||
-      lila.game.Game.allowRated(realVariant, clockConfig.some)
+      lila.core.game.allowRated(realVariant, clockConfig.some)
 
   def sufficientDuration = estimateNumberOfGamesOneCanPlay >= 3
   def excessiveDuration  = estimateNumberOfGamesOneCanPlay <= 150
@@ -229,7 +234,7 @@ private[tournament] case class TournamentSetup(
         variant = newVariant,
         startsAt = startDate | old.startsAt,
         password = password.fold(old.password)(_.some.filter(_.nonEmpty)),
-        position = newVariant.standard so {
+        position = newVariant.standard.so {
           if position.isDefined && (old.isCreated || old.position.isDefined) then realPosition
           else old.position
         },

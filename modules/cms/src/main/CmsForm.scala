@@ -2,26 +2,28 @@ package lila.cms
 
 import play.api.data.*
 import play.api.data.Forms.*
+import play.api.data.validation.Constraints
+import scalalib.model.Language
 
-import lila.common.Form.{ cleanNonEmptyText, into, slugConstraint, given }
-import lila.i18n.{ Language, LangForm }
-import lila.user.User
+import lila.common.Form.{ cleanNonEmptyText, cleanTextWithSymbols, into, slugConstraint }
+import lila.core.i18n.LangList
+import lila.core.id.{ CmsPageId, CmsPageKey }
 
-object CmsForm:
+final class CmsForm(langList: LangList):
 
   val create = Form:
     mapping(
-      "key" -> cleanNonEmptyText(minLength = 3, maxLength = 120).verifying(slugConstraint).into[CmsPage.Key],
-      "title"    -> cleanNonEmptyText(minLength = 3, maxLength = 150),
-      "markdown" -> cleanNonEmptyText(minLength = 0, maxLength = 1000_000).into[Markdown],
-      "language" -> LangForm.popularLanguages.mapping,
+      "key"   -> cleanNonEmptyText(minLength = 3, maxLength = 120).verifying(slugConstraint).into[CmsPageKey],
+      "title" -> cleanNonEmptyText(minLength = 3, maxLength = 150),
+      "markdown" -> cleanTextWithSymbols(maxLength = 1000_000).into[Markdown],
+      "language" -> langList.popularLanguagesForm.mapping,
       "live"     -> boolean,
       "canonicalPath" -> optional:
         nonEmptyText.transform(p => if p.startsWith("/") then p else s"/$p", identity)
-    )(CmsPageData.apply)(unapply)
+    )(CmsForm.CmsPageData.apply)(unapply)
 
   def edit(page: CmsPage) = create.fill:
-    CmsPageData(
+    CmsForm.CmsPageData(
       key = page.key,
       title = page.title,
       markdown = lila.common.MarkdownToastUi.latex.removeFrom(page.markdown),
@@ -30,17 +32,18 @@ object CmsForm:
       canonicalPath = page.canonicalPath
     )
 
+object CmsForm:
   case class CmsPageData(
-      key: CmsPage.Key,
+      key: CmsPageKey,
       title: String,
       markdown: Markdown,
       language: Language,
       live: Boolean,
       canonicalPath: Option[String]
   ):
-    def create(user: User) =
+    def create(user: UserId) =
       CmsPage(
-        id = CmsPage.Id.random,
+        id = CmsPageId(scalalib.ThreadLocalRandom.nextString(6)),
         key = key,
         title = title,
         markdown = markdown,
@@ -48,7 +51,7 @@ object CmsForm:
         live = live,
         canonicalPath = canonicalPath,
         at = nowInstant,
-        by = user.id
+        by = user
       )
 
-    def update(prev: CmsPage, user: User) = create(user).copy(id = prev.id)
+    def update(prev: CmsPage, user: UserId) = create(user).copy(id = prev.id)

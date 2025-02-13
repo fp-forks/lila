@@ -2,12 +2,13 @@ package lila.ublog
 
 import play.api.data.*
 import play.api.data.Forms.*
+import scalalib.model.Language
 
-import lila.common.Form.{ cleanNonEmptyText, stringIn, into, given }
-import lila.i18n.{ defaultLanguage, LangList, Language, LangForm }
-import lila.user.User
+import lila.common.Form.{ cleanNonEmptyText, into, given }
+import lila.core.captcha.{ CaptchaApi, WithCaptcha }
+import lila.core.i18n.{ LangList, toLanguage, defaultLanguage }
 
-final class UblogForm(val captcher: lila.hub.actors.Captcher) extends lila.hub.CaptchedForm:
+final class UblogForm(val captcher: CaptchaApi, langList: LangList):
 
   import UblogForm.*
 
@@ -18,16 +19,17 @@ final class UblogForm(val captcher: lila.hub.actors.Captcher) extends lila.hub.C
       "markdown"    -> cleanNonEmptyText(minLength = 0, maxLength = 100_000).into[Markdown],
       "imageAlt"    -> optional(cleanNonEmptyText(minLength = 3, maxLength = 200)),
       "imageCredit" -> optional(cleanNonEmptyText(minLength = 3, maxLength = 200)),
-      "language"    -> optional(LangForm.popularLanguages.mapping),
+      "language"    -> optional(langList.popularLanguagesForm.mapping),
       "topics"      -> optional(text),
       "live"        -> boolean,
       "discuss"     -> boolean,
+      "sticky"      -> boolean,
       "gameId"      -> of[GameId],
       "move"        -> text
     )(UblogPostData.apply)(unapply)
 
   val create = Form:
-    base.verifying(captchaFailMessage, validateCaptcha)
+    base.verifying(lila.core.captcha.failMessage, captcher.validateSync)
 
   def edit(post: UblogPost) = Form(base).fill:
     UblogPostData(
@@ -40,6 +42,7 @@ final class UblogForm(val captcher: lila.hub.actors.Captcher) extends lila.hub.C
       topics = post.topics.mkString(", ").some,
       live = post.live,
       discuss = ~post.discuss,
+      sticky = ~post.sticky,
       gameId = GameId(""),
       move = ""
     )
@@ -56,9 +59,10 @@ object UblogForm:
       topics: Option[String],
       live: Boolean,
       discuss: Boolean,
+      sticky: Boolean,
       gameId: GameId,
       move: String
-  ):
+  ) extends WithCaptcha:
 
     def create(user: User) =
       UblogPost(
@@ -67,11 +71,12 @@ object UblogForm:
         title = title,
         intro = intro,
         markdown = markdown,
-        language = language.orElse(user.language) | defaultLanguage,
-        topics = topics so UblogTopic.fromStrList,
+        language = language.orElse(user.realLang.map(toLanguage)) | defaultLanguage,
+        topics = topics.so(UblogTopic.fromStrList),
         image = none,
         live = false,
         discuss = Option(false),
+        sticky = Option(false),
         created = UblogPost.Recorded(user.id, nowInstant),
         updated = none,
         lived = none,
@@ -89,20 +94,25 @@ object UblogForm:
         image = prev.image.map: i =>
           i.copy(alt = imageAlt, credit = imageCredit),
         language = language | prev.language,
-        topics = topics so UblogTopic.fromStrList,
+        topics = topics.so(UblogTopic.fromStrList),
         live = live,
         discuss = Option(discuss),
+        sticky = Option(sticky),
         updated = UblogPost.Recorded(user.id, nowInstant).some,
-        lived = prev.lived orElse live.option(UblogPost.Recorded(user.id, nowInstant))
+        lived = prev.lived.orElse(live.option(UblogPost.Recorded(user.id, nowInstant)))
       )
+
+  private val tierMapping =
+    "tier" -> number(min = UblogRank.Tier.HIDDEN.value, max = UblogRank.Tier.BEST.value)
+      .into[UblogRank.Tier]
 
   val tier = Form:
     single:
-      "tier" -> number(min = UblogBlog.Tier.HIDDEN.value, max = UblogBlog.Tier.BEST.value)
-        .into[UblogBlog.Tier]
+      tierMapping
 
   val adjust = Form:
     tuple(
-      "days"   -> optional(number(min = -180, max = 180)),
-      "pinned" -> boolean
+      "pinned" -> boolean,
+      tierMapping,
+      "days" -> optional(number(min = -180, max = 180))
     )

@@ -1,132 +1,191 @@
 package lila.relay
 
 import reactivemongo.api.bson.*
+import monocle.syntax.all.*
+import java.time.temporal.ChronoUnit
 
-import lila.relay.RelayTour.ActiveWithSomeRounds
 import lila.db.dsl.{ *, given }
 
 final class RelayListing(
-    roundRepo: RelayRoundRepo,
+    colls: RelayColls,
     tourRepo: RelayTourRepo,
+    groupRepo: RelayGroupRepo,
     cacheApi: lila.memo.CacheApi
 )(using Executor):
 
-  import BSONHandlers.{ readRoundWithTour, given }
+  import BSONHandlers.{ *, given }
 
-  private var spotlightCache: List[RelayTour.ActiveWithSomeRounds] = Nil
+  def spotlight: List[RelayCard] = spotlightCache
 
-  def spotlight: List[ActiveWithSomeRounds] = spotlightCache
+  val defaultRoundToLink = cacheApi[RelayTourId, Option[RelayRound]](32, "relay.defaultRoundToLink"):
+    _.expireAfterWrite(5.seconds).buildAsyncFuture: tourId =>
+      tourWithRounds(tourId).mapz(RelayListing.defaultRoundToLink)
 
-  val active = cacheApi.unit[List[RelayTour.ActiveWithSomeRounds]]:
-    _.refreshAfterWrite(5 seconds).buildAsyncFuture: _ =>
+  def active: Fu[List[RelayCard]] = activeCache.get({})
+
+  private enum Spot:
+    case UngroupedTour(tour: RelayTour.WithRounds)                                    extends Spot
+    case GroupWithTours(group: RelayGroup, tours: NonEmptyList[RelayTour.WithRounds]) extends Spot
+
+  private case class Selected(t: RelayTour.WithRounds, round: RelayRound, group: Option[RelayGroup.Name])
+
+  private var spotlightCache: List[RelayCard] = Nil
+
+  private val activeCache = cacheApi.unit[List[RelayCard]]:
+    _.expireAfterWrite(5.seconds).buildAsyncFuture: _ =>
       for
-        upcoming <- upcoming.get({})
-        max = 100
-        docs <- tourRepo.coll
-          .aggregateList(max): framework =>
-            import framework.*
-            Match(tourRepo.selectors.officialActive ++ $doc("_id" $nin upcoming.map(_.tour.id))) -> List(
-              Sort(Descending("tier")),
-              PipelineOperator:
-                $lookup.pipeline(
-                  from = roundRepo.coll,
-                  as = "round",
-                  local = "_id",
-                  foreign = "tourId",
-                  pipe = List(
-                    $doc("$match"     -> $doc("finished" -> false)),
-                    $doc("$addFields" -> $doc("sync.log" -> $arr())),
-                    $doc("$sort"      -> roundRepo.sort.chrono),
-                    $doc("$limit"     -> 1)
-                  )
-                )
-              ,
-              UnwindField("round"),
-              Limit(max)
-            )
-        tours = for
-          doc   <- docs
-          tour  <- doc.asOpt[RelayTour]
-          round <- doc.getAsOpt[RelayRound]("round")
-        yield (tour, round)
-        sorted = tours.sortBy: (tour, round) =>
+        spots <- getSpots
+        selected = spots.flatMap:
+          case Spot.UngroupedTour(t) =>
+            t.rounds.find(!_.isFinished).map(Selected(t, _, none)).map(NonEmptyList.one)
+          case Spot.GroupWithTours(group, tours) =>
+            val all = for
+              tour  <- tours.toList
+              round <- tour.rounds.find(!_.isFinished)
+            yield Selected(tour, round, group.name.some)
+            // sorted preserves the original ordering while adding its own
+            all.sorted(using Ordering.by(s => (tierPriority(s.t.tour), !s.round.hasStarted))).take(3).toNel
+        cards = selected.map(toRelayCard)
+        sorted = cards.sortBy: t =>
+          val startAt       = t.display.startedAt.orElse(t.display.startsAtTime)
+          val crowdRelevant = startAt.exists(_.isBefore(nowInstant.plusHours(1)))
           (
-            !round.startedAt.isDefined,                    // ongoing tournaments first
-            0 - ~tour.tier,                                // then by tier
-            0 - ~round.crowd,                              // then by viewers
-            round.startsAt.fold(Long.MaxValue)(_.toMillis) // then by next round date
+            tierPriority(t.tour),                   // by tier
+            crowdRelevant.so(0 - ~t.link.crowd),    // then by viewers
+            startAt.fold(Long.MaxValue)(_.toMillis) // then by next round date
           )
-        active <- sorted.traverse: (tour, round) =>
-          defaultRoundToShow.get(tour.id) map: link =>
-            RelayTour.ActiveWithSomeRounds(tour, display = round, link = link | round)
       yield
-        spotlightCache = active
+        spotlightCache = sorted
           .filter(_.tour.spotlight.exists(_.enabled))
-          .filterNot(_.display.finished)
           .filter: tr =>
-            tr.display.hasStarted || tr.display.startsAt.exists(_.isBefore(nowInstant.plusMinutes(30)))
-          .take(2)
-        active
+            tr.display.hasStarted || tr.display.startsAtTime.exists(_.isBefore(nowInstant.plusMinutes(30)))
+        sorted
 
-  val upcoming = cacheApi.unit[List[RelayTour.WithLastRound]]:
-    _.refreshAfterWrite(14 seconds).buildAsyncFuture: _ =>
-      val max = 64
-      tourRepo.coll
-        .aggregateList(max): framework =>
-          import framework.*
-          Match(tourRepo.selectors.officialActive) -> List(
-            Sort(Descending("tier")),
-            PipelineOperator:
-              $lookup.pipeline(
-                from = roundRepo.coll,
-                as = "round",
-                local = "_id",
-                foreign = "tourId",
-                pipe = List(
-                  $doc("$sort"  -> $sort.asc("startsAt")),
-                  $doc("$limit" -> 1),
-                  $doc("$match" -> $doc("finished" -> false, "startsAt" $gte nowInstant))
-                )
-              )
-            ,
-            UnwindField("round"),
-            Limit(max)
-          )
-        .map: docs =>
-          for
-            doc   <- docs
-            tour  <- doc.asOpt[RelayTour]
-            round <- doc.getAsOpt[RelayRound]("round")
-          yield RelayTour.WithLastRound(tour, round)
-        .map:
-          _.sortBy: rt =>
-            (
-              0 - ~rt.tour.tier,                                // tier sort
-              rt.round.startsAt.fold(Long.MaxValue)(_.toMillis) // then by next round date
-            )
+  private def toRelayCard(s: NonEmptyList[Selected]): RelayCard =
+    val main = s.head
+    RelayCard(
+      tour = main.t.tour,
+      display = main.round,
+      link = RelayListing.defaultRoundToLink(main.t) | main.round,
+      group = main.group,
+      alts = s.tail.filter(_.round.hasStarted).map(s => s.round.withTour(s.t.tour))
+    )
 
-  val defaultRoundToShow = cacheApi[RelayTour.Id, Option[RelayRound]](32, "relay.lastAndNextRounds"):
-    _.expireAfterWrite(5 seconds).buildAsyncFuture: tourId =>
-      val chronoSort = $doc("startsAt" -> 1, "createdAt" -> 1)
-      val lastStarted = roundRepo.coll
-        .find($doc("tourId" -> tourId, "startedAt" $exists true))
-        .sort($doc("startedAt" -> -1))
-        .one[RelayRound]
-      val next = roundRepo.coll
-        .find($doc("tourId" -> tourId, "finished" -> false))
-        .sort(chronoSort)
-        .one[RelayRound]
-      lastStarted zip next flatMap {
-        case (None, _) => // no round started yet, show the first one
-          roundRepo.coll
-            .find($doc("tourId" -> tourId))
-            .sort(chronoSort)
-            .one[RelayRound]
-        case (Some(last), Some(next)) => // show the next one if it's less than an hour away
-          fuccess:
-            if next.startsAt.exists(_ isBefore nowInstant.plusHours(1))
-            then next.some
-            else last.some
-        case (Some(last), None) =>
-          fuccess(last.some)
-      }
+  private def tierPriority(t: RelayTour) = -t.tier.so(_.v)
+
+  private object dynamicTier:
+
+    def apply(t: RelayTour.WithRounds): Option[RelayTour.WithRounds] =
+      nextRoundTier(t)
+        .orElse(lastRoundTier(t))
+        .map: tier =>
+          t.focus(_.tour.tier).replace(tier.some)
+
+    private def nextRoundTier(t: RelayTour.WithRounds): Option[RelayTour.Tier] = for
+      round   <- t.rounds.find(!_.isFinished)
+      tier    <- t.tour.tier
+      startAt <- round.startedAt.orElse(round.startsAtTime)
+      days = scalalib.time.daysBetween(nowInstant.withTimeAtStartOfDay, startAt)
+      newTier <-
+        import RelayTour.Tier.*
+        if days > 30 then none
+        else if tier == best && days > 10 then normal.some
+        else if tier == best && days > 5 then high.some
+        else if tier == high && days > 5 then normal.some
+        else tier.some
+    yield newTier
+
+    private def lastRoundTier(t: RelayTour.WithRounds): Option[RelayTour.Tier] = for
+      round    <- t.rounds.findLast(_.isFinished)
+      tier     <- t.tour.tier
+      finishAt <- round.finishedAt
+      hours = ChronoUnit.HOURS.between(finishAt, nowInstant).toInt
+      newTier <-
+        import RelayTour.Tier.*
+        if hours > 48 then none
+        else if tier == best then
+          if hours < 6 then best.some
+          else if hours < 24 then high.some
+          else normal.some
+        else if tier == high then
+          if hours < 3 then high.some
+          else if hours < 24 then normal.some
+          else none
+        else if hours < 3 then normal.some
+        else none
+    yield newTier
+
+  private def getSpots: Fu[List[Spot]] = for
+    rawTours <- toursWithRounds
+    tours = rawTours.flatMap(dynamicTier.apply)
+    groups <- groupRepo.byTours(tours.map(_.tour.id))
+  yield
+    val toursById = tours.mapBy(_.tour.id)
+    val ungroupedTours: List[Spot] = tours
+      .filter(t => !groups.exists(_.tours.contains(t.tour.id)))
+      .map(Spot.UngroupedTour.apply)
+    val groupedTours: List[Spot] = groups.flatMap: group =>
+      group.tours.flatMap(toursById.get).toNel.map(Spot.GroupWithTours(group, _))
+    ungroupedTours ::: groupedTours
+
+  private def toursWithRounds: Fu[List[RelayTour.WithRounds]] =
+    val max = 200
+    colls.tour
+      .aggregateList(max): framework =>
+        import framework.*
+        Match(RelayTourRepo.selectors.officialActive) -> List(
+          Project(tourUnsets),
+          Sort(Descending("tier")),
+          Limit(max),
+          PipelineOperator(tourRoundPipeline)
+        )
+      .map(_.flatMap(readTourRound))
+
+  private def tourWithRounds(id: RelayTourId): Fu[Option[RelayTour.WithRounds]] =
+    colls.tour
+      .aggregateOne(): framework =>
+        import framework.*
+        Match($id(id)) -> List(
+          Project(tourUnsets),
+          PipelineOperator(tourRoundPipeline)
+        )
+      .map(_.flatMap(readTourRound))
+
+  // unset heavy fields that we don't use for listing
+  private val tourUnsets =
+    $doc("subscribers" -> false, "notified" -> false, "teams" -> false, "players" -> false)
+
+  private val tourRoundPipeline: Bdoc =
+    $lookup.pipelineBC(
+      from = colls.round,
+      as = "rounds",
+      local = "_id",
+      foreign = "tourId",
+      pipe = List($doc("$sort" -> RelayRoundRepo.sort.asc))
+    )
+
+  private def readTourRound(doc: Bdoc): Option[RelayTour.WithRounds] = for
+    tour   <- doc.asOpt[RelayTour]
+    rounds <- doc.getAsOpt[List[RelayRound]]("rounds")
+    if rounds.nonEmpty
+  yield tour.withRounds(rounds)
+
+private object RelayListing:
+
+  def defaultRoundToLink(trs: RelayTour.WithRounds): Option[RelayRound] =
+    if !trs.tour.active then trs.rounds.headOption
+    else
+      trs.rounds
+        .flatMap: round =>
+          round.startedAt.map(_ -> round)
+        .sortBy(-_._1.getEpochSecond)
+        .headOption
+        .match
+          case None => trs.rounds.headOption
+          case Some(_, last) =>
+            trs.rounds.find(!_.isFinished) match
+              case None => last.some
+              case Some(next) =>
+                if next.startsAtTime.exists(_.isBefore(nowInstant.plusHours(1)))
+                then next.some
+                else last.some

@@ -1,6 +1,9 @@
 package lila.i18n
 
 import play.api.i18n.Lang
+import scalalib.model.Language
+
+import lila.core.i18n.toLanguage
 
 private enum I18nQuantity:
   case Zero, One, Two, Few, Many, Other
@@ -16,8 +19,18 @@ private object I18nQuantity:
 
   type Selector = Count => I18nQuantity
 
+  def fromString(s: String): Option[I18nQuantity] =
+    s match
+      case "zero"  => Some(Zero)
+      case "one"   => Some(One)
+      case "two"   => Some(Two)
+      case "few"   => Some(Few)
+      case "many"  => Some(Many)
+      case "other" => Some(Other)
+      case _       => None
+
   def apply(lang: Lang, c: Count): I18nQuantity =
-    langMap.getOrElse(Language(lang), selectors.default)(c)
+    langMap.getOrElse(toLanguage(lang), selectors.default)(c)
 
   private object selectors:
 
@@ -111,7 +124,7 @@ private object I18nQuantity:
   import selectors.*
 
   private val langMap: Map[Language, Selector] = LangList.all.map: (lang, _) =>
-    Language(lang) -> lang.language.match
+    toLanguage(lang) -> lang.language.match
 
       case "fr" | "ff" | "kab" | "co" | "ak" | "am" | "bh" | "fil" | "tl" | "guw" | "hi" | "ln" | "mg" |
           "nso" | "ti" | "wa" =>

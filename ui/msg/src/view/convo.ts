@@ -1,9 +1,9 @@
-import MsgCtrl from '../ctrl';
+import type MsgCtrl from '../ctrl';
 import renderActions from './actions';
 import renderInteract from './interact';
 import renderMsgs from './msgs';
-import { Convo } from '../interfaces';
-import { h, VNode } from 'snabbdom';
+import type { Convo } from '../interfaces';
+import { h, type VNode } from 'snabbdom';
 import * as licon from 'common/licon';
 import { hookMobileMousedown } from 'common/device';
 import { userLink } from 'common/userLink';
@@ -17,7 +17,9 @@ export default function renderConvo(ctrl: MsgCtrl, convo: Convo): VNode {
           attrs: { 'data-icon': licon.LessThan },
           hook: hookMobileMousedown(ctrl.showSide),
         }),
-        userLink({ ...user, moderator: user.id == 'lichess' }),
+        userLink({ ...user, moderator: user.id === 'lichess' }),
+        convo.modDetails?.kid ? h('bad', 'KID') : undefined,
+        convo.modDetails?.openInbox === false ? h('bad', "doesn't want messages") : undefined,
       ]),
       h('div.msg-app__convo__head__actions', renderActions(ctrl, convo)),
     ]),
@@ -26,10 +28,10 @@ export default function renderConvo(ctrl: MsgCtrl, convo: Convo): VNode {
       convo.relations.out === false || convo.relations.in === false
         ? blocked('This conversation is blocked.')
         : ctrl.data.me.bot
-        ? blocked('Bot accounts cannot send nor receive messages.')
-        : convo.postable
-        ? renderInteract(ctrl, user)
-        : blocked(`${user.name} doesn't accept new messages.`),
+          ? blocked('Bot accounts cannot send nor receive messages.')
+          : convo.postable
+            ? renderInteract(ctrl, user)
+            : blocked(`${user.name} doesn't accept new messages.`),
     ]),
   ]);
 }

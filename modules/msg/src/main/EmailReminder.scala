@@ -1,14 +1,16 @@
 package lila.msg
 
-import lila.common.config.BaseUrl
+import lila.core.config.BaseUrl
 import lila.memo.MongoCache
-import lila.user.UserRepo
 
-final class EmailReminder(mongoCache: MongoCache.Api, userRepo: UserRepo, api: MsgApi, baseUrl: BaseUrl)(using
-    Executor
-):
+final class EmailReminder(
+    mongoCache: MongoCache.Api,
+    userApi: lila.core.user.UserApi,
+    api: MsgApi,
+    baseUrl: BaseUrl
+)(using Executor):
 
-  def apply(userId: UserId) = cache get userId
+  def apply(userId: UserId) = cache.get(userId)
 
   private val emailReminderMsg = s"""No email associated with your account
 
@@ -19,14 +21,14 @@ If you forget your password, or if your password is leaked from another website,
 
 Please visit $baseUrl/account/email to set your account email address. That way, you'll be able to reset your password when needed."""
 
-  private val cache = mongoCache[UserId, Boolean](1024, "security:email:reminder", 10 days, _.value):
+  private val cache = mongoCache[UserId, Boolean](1024, "security:email:reminder", 10.days, _.value):
     loader =>
-      _.expireAfterWrite(11 days)
-        .maximumSize(16 * 1024)
+      _.expireAfterWrite(11.days)
+        .maximumSize(8 * 1024)
         .buildAsyncFuture:
           loader: userId =>
-            userRepo
-              .withoutEmail(userId)
+            userApi
+              .enabledById(userId)
               .flatMap:
-                _.fold(fuccess(true)): user =>
-                  api.systemPost(userId, emailReminderMsg) inject false
+                _.filterNot(_.hasEmail).fold(fuccess(true)): user =>
+                  api.systemPost(userId, emailReminderMsg).inject(false)

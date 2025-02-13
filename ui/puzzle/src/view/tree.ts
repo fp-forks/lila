@@ -1,10 +1,11 @@
-import { VNode, Classes } from 'snabbdom';
+import type { VNode, Classes } from 'snabbdom';
 import { defined } from 'common';
-import throttle from 'common/throttle';
+import { throttle } from 'common/timing';
 import { renderEval as normalizeEval } from 'ceval';
 import { path as treePath } from 'tree';
-import { MaybeVNode, LooseVNodes, looseH as h } from 'common/snabbdom';
-import PuzzleCtrl from '../ctrl';
+import { type MaybeVNode, type LooseVNodes, looseH as h } from 'common/snabbdom';
+import type PuzzleCtrl from '../ctrl';
+import { plyToTurn } from 'chess';
 
 interface Ctx {
   ctrl: PuzzleCtrl;
@@ -21,22 +22,19 @@ interface Glyph {
   symbol: string;
 }
 
-const autoScroll = throttle(150, (ctrl: PuzzleCtrl, el) => {
-  const cont = el.parentNode;
-  const target = el.querySelector('.active');
+const autoScroll = throttle(150, (ctrl: PuzzleCtrl, el: HTMLElement) => {
+  const cont = el.parentNode as HTMLElement;
+  const target = el.querySelector('.active') as HTMLElement | null;
   if (!target) {
     cont.scrollTop = ctrl.path === treePath.root ? 0 : 99999;
     return;
   }
-  cont.scrollTop = target.offsetTop - cont.offsetHeight / 2 + target.offsetHeight;
+  const targetOffset = target.getBoundingClientRect().y - el.getBoundingClientRect().y;
+  cont.scrollTop = targetOffset - cont.offsetHeight / 2 + target.offsetHeight;
 });
 
 function pathContains(ctx: Ctx, path: Tree.Path): boolean {
   return treePath.contains(ctx.ctrl.path, path);
-}
-
-function plyToTurn(ply: number): number {
-  return Math.floor((ply - 1) / 2) + 1;
 }
 
 export function renderIndex(ply: number, withDots: boolean): VNode {
@@ -96,33 +94,34 @@ function renderMainlineMoveOf(ctx: Ctx, node: Tree.Node, opts: RenderOpts): VNod
     hist: node.ply < ctx.ctrl.initialNode.ply,
   };
   if (node.puzzle) classes[node.puzzle] = true;
-  return h('move', { attrs: { p: path }, class: classes }, renderMove(ctx, node));
+  return h('move', { attrs: { p: path }, class: classes }, renderMove(node));
 }
 
-function renderGlyph(glyph: Glyph): VNode {
-  return h('glyph', { attrs: { title: glyph.name } }, glyph.symbol);
-}
+const renderGlyph = (glyph: Glyph): VNode => h('glyph', { attrs: { title: glyph.name } }, glyph.symbol);
 
-function puzzleGlyph(ctx: Ctx, node: Tree.Node): MaybeVNode {
+function puzzleGlyph(node: Tree.Node): MaybeVNode {
   switch (node.puzzle) {
     case 'good':
     case 'win':
-      return renderGlyph({ name: ctx.ctrl.trans.noarg('bestMove'), symbol: '✓' });
+      return renderGlyph({ name: i18n.puzzle.bestMove, symbol: '✓' });
     case 'fail':
-      return renderGlyph({ name: ctx.ctrl.trans.noarg('puzzleFailed'), symbol: '✗' });
+      return renderGlyph({
+        name: 'Puzzle failed', //puzzleFailed key never worked, it's in learn/*.xml
+        symbol: '✗',
+      });
     case 'retry':
-      return renderGlyph({ name: ctx.ctrl.trans.noarg('goodMove'), symbol: '?!' });
+      return renderGlyph({ name: i18n.puzzle.goodMove, symbol: '?!' });
     default:
       return;
   }
 }
 
-function renderMove(ctx: Ctx, node: Tree.Node): LooseVNodes {
+function renderMove(node: Tree.Node): LooseVNodes {
   const ev = node.eval || node.ceval;
   return [
     node.san,
     ev && (defined(ev.cp) ? renderEval(normalizeEval(ev.cp)) : defined(ev.mate) && renderEval('#' + ev.mate)),
-    puzzleGlyph(ctx, node),
+    puzzleGlyph(node),
   ];
 }
 
@@ -135,7 +134,7 @@ function renderVariationMoveOf(ctx: Ctx, node: Tree.Node, opts: RenderOpts): VNo
   return h('move', { attrs: { p: path }, class: classes }, [
     withIndex && renderIndex(node.ply, true),
     node.san,
-    puzzleGlyph(ctx, node),
+    puzzleGlyph(node),
   ]);
 }
 
