@@ -1,11 +1,10 @@
-import type Tagify from '@yaireo/tagify';
 import { prop } from 'common';
 import { bind, bindSubmit, onInsert } from 'common/snabbdom';
-import * as xhr from 'common/xhr';
-import { h, VNode } from 'snabbdom';
-import { Redraw } from '../interfaces';
-import { Topic } from './interfaces';
-import StudyCtrl from './studyCtrl';
+import { json as xhrJson, url as xhrUrl } from 'common/xhr';
+import { snabDialog } from 'common/dialog';
+import { h, type VNode } from 'snabbdom';
+import type { Topic } from './interfaces';
+import type StudyCtrl from './studyCtrl';
 
 export default class TopicsCtrl {
   open = prop(false);
@@ -13,7 +12,6 @@ export default class TopicsCtrl {
   constructor(
     readonly save: (data: string[]) => void,
     readonly getTopics: () => Topic[],
-    readonly trans: Trans,
     readonly redraw: Redraw,
   ) {}
 }
@@ -29,7 +27,7 @@ export const view = (ctrl: StudyCtrl): VNode =>
       ? h(
           'a.manage',
           { hook: bind('click', () => ctrl.topics.open(true), ctrl.redraw) },
-          ctrl.trans.noarg('manageTopics'),
+          i18n.study.manageTopics,
         )
       : null,
   ]);
@@ -37,14 +35,15 @@ export const view = (ctrl: StudyCtrl): VNode =>
 let tagify: Tagify | undefined;
 
 export const formView = (ctrl: TopicsCtrl, userId?: string): VNode =>
-  lichess.dialog.snab({
+  snabDialog({
     class: 'study-topics',
     onClose() {
       ctrl.open(false);
       ctrl.redraw();
     },
+    modal: true,
     vnodes: [
-      h('h2', ctrl.trans.noarg('topics')),
+      h('h2', i18n.study.topics),
       h(
         'form',
         {
@@ -62,7 +61,7 @@ export const formView = (ctrl: TopicsCtrl, userId?: string): VNode =>
             { hook: onInsert(elm => setupTagify(elm as HTMLTextAreaElement, userId)) },
             ctrl.getTopics().join(', ').replace(/[<>]/g, ''),
           ),
-          h('button.button', { type: 'submit' }, ctrl.trans.noarg('save')),
+          h('button.button', { type: 'submit' }, i18n.study.save),
         ],
       ),
     ],
@@ -73,24 +72,24 @@ export const formView = (ctrl: TopicsCtrl, userId?: string): VNode =>
   });
 
 function setupTagify(elm: HTMLInputElement | HTMLTextAreaElement, userId?: string) {
-  lichess.asset.loadCssPath('tagify');
-  lichess.asset.loadIife('npm/tagify/tagify.min.js').then(() => {
-    const tagi = (tagify = new (window.Tagify as typeof Tagify)(elm, { pattern: /.{2,}/, maxTags: 30 }));
+  site.asset.loadCssPath('bits.tagify');
+  site.asset.loadIife('npm/tagify.min.js').then(() => {
+    const tagi = (tagify = new window.Tagify(elm, { pattern: /.{2,}/, maxTags: 30 }));
     let abortCtrl: AbortController | undefined; // for aborting the call
     tagi.on('input', e => {
       const term = (e.detail as Tagify.TagData).value.trim();
       if (term.length < 2) return;
-      tagi.settings.whitelist!.length = 0; // reset the whitelist
+      tagi.settings.whitelist.length = 0; // reset the whitelist
       abortCtrl && abortCtrl.abort();
       abortCtrl = new AbortController();
       // show loading animation and hide the suggestions dropdown
       tagi.loading(true).dropdown.hide.call(tagi);
-      xhr
-        .json(xhr.url('/study/topic/autocomplete', { term, user: userId }), { signal: abortCtrl.signal })
-        .then(list => {
-          tagi.settings.whitelist!.splice(0, list.length, ...list); // update whitelist Array in-place
+      xhrJson(xhrUrl('/study/topic/autocomplete', { term, user: userId }), { signal: abortCtrl.signal }).then(
+        list => {
+          tagi.settings.whitelist.splice(0, list.length, ...list); // update whitelist Array in-place
           tagi.loading(false).dropdown.show.call(tagi, term); // render the suggestions dropdown
-        });
+        },
+      );
     });
     $('.tagify__input').each(function (this: HTMLInputElement) {
       this.focus();

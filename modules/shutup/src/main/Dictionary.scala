@@ -7,9 +7,9 @@ package lila.shutup
 private object Dictionary:
 
   def en = dict("""
-(burn|die) in hell
+(burn|die|rot) in hell
 (f++|ph)(u++|e++|a++)c?k(er|r|u|k|t|ing?|ign|en|tard?|face|off?|e?d|)
-(f|ph)agg?([oi]t|)
+go to hell
 (kill|hang|neck) my ?self
 [ck]um(shot|)
 [ck]unt(ing|)
@@ -55,6 +55,7 @@ cunn?ilingu
 dic?k(head|face|suc?ker|)
 dildo
 dogg?ystyle
+dogshit
 douche(bag|)
 downsie?
 dumb(ass?|)
@@ -68,6 +69,7 @@ go (and )?bomb
 gobshite?
 gook
 gypo
+gypsy
 handjob
 hitler++
 homm?o(sexual|)
@@ -244,6 +246,7 @@ uebok
 """)
 
   def es = dict("""
+bolud[oa]
 cabr[oó]na?
 cag[oó]n
 ching(ue|a)
@@ -254,9 +257,11 @@ est[úu]pid[ao]
 gilipollas
 hdp
 hijo de (put\w*|per+a)
+hijueputa
 idiota
 imbecil
 madre
+malparid[ao]
 maric[oó]na?
 maric[ao]
 mierda
@@ -265,6 +270,7 @@ payas[ao]
 pendejo
 po(ll|y)a
 put[ao]
+putica
 trampa
 trampos[ao]
 tu eres put\w*
@@ -297,6 +303,7 @@ gaa?ndu?
   def fr = dict("""
 batard
 connard
+cr[eé]tin
 encul[eé]
 fdp
 pd
@@ -325,7 +332,7 @@ wi(chs|x++)er
 """)
 
   def tr = dict("""
-am[iı]na ((koy?dum)|(koya(y[iı]m|m))|(soka(y[iı]m|m))|([cç]aka(y[iı]m|m)))  
+am[iı]na ((koy?dum)|(koya(y[iı]m|m))|(soka(y[iı]m|m))|([cç]aka(y[iı]m|m)))
 amc[iı]k
 anan[iı]n am[iı]
 ((ann?an[iı](z[iı])?)|(kar[iı]n[iı](z[iı])?)|(avrad[iı]n[iı](z[iı])?)|(bac[ıi]n[iı](z[iı])?)) (s[ii̇]k[ei](yim|cem|rim|m))
@@ -350,11 +357,12 @@ yar+ak kafa(l[iı]|s[iı])
 """)
 
   def critical = dict("""
-cancer
+(die|burn)s? irl
+(f|ph)a++gg?([oi]t|)
 (go|pl(ea)?[sz]e?) (a?nd)? ?(die|burn|suicide)
 (ho?pe|wish) ((yo?)?[uy](r (famil[yi]|m[ou]m|mother))?( and )?)++ (die|burn)s?
-(die|burn)s? irl
 (kill|hang|neck) ?(yo?)?[uyi]r? ?(self|famil[yi]|m[ou]m|mother)
+cancer
 gas the
 g?kys
 get bombed

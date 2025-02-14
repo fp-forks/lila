@@ -35,8 +35,9 @@ export interface Challenge {
   status: ChallengeStatus;
   challenger?: ChallengeUser;
   destUser?: ChallengeUser;
+  rules?: unknown[];
   variant: Variant;
-  initialFen: Fen;
+  initialFen: FEN;
   rated: boolean;
   timeControl: TimeControl;
   color: Color | 'random';
@@ -55,9 +56,6 @@ export type Reasons = {
 export interface ChallengeData {
   in: Array<Challenge>;
   out: Array<Challenge>;
-  i18n?: {
-    [key: string]: string;
-  };
   reasons?: Reasons;
 }
 

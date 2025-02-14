@@ -1,10 +1,13 @@
 package lila.i18n
 
-import play.api.i18n.Lang
 import play.api.data.*
 import play.api.data.Forms.*
 
+import scalalib.model.Language
+
 object LangForm:
+
+  val select = Form(single("lang" -> text.verifying(code => LangPicker.byStr(code).isDefined)))
 
   object allLanguages:
     val choices: List[(Language, String)] = LangList.languageChoices

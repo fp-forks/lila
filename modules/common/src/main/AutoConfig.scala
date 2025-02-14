@@ -1,12 +1,10 @@
 package lila.common
 package autoconfig
 
-import scala.quoted.*
-import scala.annotation.StaticAnnotation
-
+import com.typesafe.config.*
 import play.api.ConfigLoader
 
-import com.typesafe.config.*
+import scala.quoted.*
 
 // Copied from https://github.com/keynmol/autoconfig-lichess-play-derivation/blob/main/macros.scala
 // Thanks velvetbaldmime :)
@@ -15,8 +13,6 @@ import com.typesafe.config.*
   * @param name
   *   the name of the configuration key
   */
-final case class ConfigName(name: String) extends StaticAnnotation:
-  assert(name != null && name.nonEmpty)
 
 given [A](using loader: ConfigLoader[A]): ConfigLoader[Seq[A]] =
   ConfigLoader.seqConfigLoader.map(_.map { loader.load(_, "") })
@@ -30,6 +26,9 @@ given [A, B](using bts: SameRuntime[A, B], loader: ConfigLoader[A]): ConfigLoade
 def optionalConfig[A](using valueLoader: ConfigLoader[A]): ConfigLoader[Option[A]] = (config, path) =>
   if !config.hasPath(path) || config.getIsNull(path) then None
   else Some(valueLoader.load(config, path))
+
+final case class ConfigName(name: String) extends scala.annotation.StaticAnnotation:
+  assert(name != null && name.nonEmpty)
 
 object AutoConfig:
 

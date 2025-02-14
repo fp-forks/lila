@@ -1,15 +1,15 @@
 import resizeHandle from 'common/resize';
-import { Config as CgConfig } from 'chessground/config';
-import { h, VNode } from 'snabbdom';
-import * as Prefs from 'common/prefs';
-import PuzzleCtrl from '../ctrl';
+import { h, type VNode } from 'snabbdom';
+import { Coords, ShowResizeHandle } from 'common/prefs';
+import type PuzzleCtrl from '../ctrl';
+import { storage } from 'common/storage';
+import { Chessground as makeChessground } from 'chessground';
 
 export default function (ctrl: PuzzleCtrl): VNode {
   return h('div.cg-wrap', {
     hook: {
-      insert: vnode =>
-        ctrl.setChessground(lichess.makeChessground(vnode.elm as HTMLElement, makeConfig(ctrl))),
-      destroy: () => ctrl.ground()!.destroy(),
+      insert: vnode => ctrl.setChessground(makeChessground(vnode.elm as HTMLElement, makeConfig(ctrl))),
+      destroy: () => ctrl.ground().destroy(),
     },
   });
 }
@@ -22,7 +22,8 @@ export function makeConfig(ctrl: PuzzleCtrl): CgConfig {
     turnColor: opts.turnColor,
     check: opts.check,
     lastMove: opts.lastMove,
-    coordinates: ctrl.pref.coords !== Prefs.Coords.Hidden,
+    coordinates: ctrl.pref.coords !== Coords.Hidden,
+    coordinatesOnSquares: ctrl.pref.coords === Coords.All,
     addPieceZIndex: ctrl.pref.is3d,
     addDimensionsCssVarsTo: document.body,
     movable: {
@@ -42,7 +43,7 @@ export function makeConfig(ctrl: PuzzleCtrl): CgConfig {
     events: {
       move: ctrl.userMove,
       insert(elements) {
-        resizeHandle(elements, Prefs.ShowResizeHandle.Always, ctrl.node.ply);
+        resizeHandle(elements, ShowResizeHandle.Always, ctrl.node.ply);
       },
     },
     premovable: {
@@ -50,7 +51,7 @@ export function makeConfig(ctrl: PuzzleCtrl): CgConfig {
     },
     drawable: {
       enabled: true,
-      defaultSnapToValidMove: lichess.storage.boolean('arrow.snap').getOrDefault(true),
+      defaultSnapToValidMove: storage.boolean('arrow.snap').getOrDefault(true),
     },
     highlight: {
       lastMove: ctrl.pref.highlight,

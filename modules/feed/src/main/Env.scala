@@ -1,13 +1,14 @@
 package lila.feed
 
-import lila.Lila.{ *, given }
 import com.softwaremill.macwire.*
-import lila.common.autoconfig.*
-import play.api.Configuration
-import lila.common.config.CollName
+
+import lila.core.config.CollName
+import lila.core.lilaism.Lilaism.*
 
 @Module
-final class Env(cacheApi: lila.memo.CacheApi, db: lila.db.Db)(using Executor):
+final class Env(cacheApi: lila.memo.CacheApi, db: lila.db.Db, flairApi: lila.core.user.FlairApi)(using
+    Executor
+):
 
   private val feedColl = db(CollName("daily_feed"))
   val api              = wire[FeedApi]

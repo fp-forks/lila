@@ -2,31 +2,34 @@ package lila.msg
 
 import play.api.libs.json.*
 
-import lila.user.{ Me, User }
 import lila.common.Json.given
-import lila.common.LightUser
-import lila.relation.Relations
+import lila.core.LightUser
+import lila.core.relation.Relations
+import cats.data.Cont
 
 final class MsgJson(
-    lightUserApi: lila.user.LightUserApi,
-    isOnline: lila.socket.IsOnline
+    lightUserApi: lila.core.user.LightUserApi,
+    isOnline: lila.core.socket.IsOnline
 )(using Executor):
 
-  private given lastMsgWrites: OWrites[Msg.Last]    = Json.writes
-  private given relationsWrites: OWrites[Relations] = Json.writes
+  private given lastMsgWrites: OWrites[Msg.Last]                 = Json.writes
+  private given relationsWrites: OWrites[Relations]              = Json.writes
+  private given modDetailsWrites: OWrites[ContactDetailsForMods] = Json.writes
 
   def threads(threads: List[MsgThread])(using me: Me): Fu[JsArray] =
-    withContacts(threads) map { threads =>
+    withContacts(threads).map { threads =>
       JsArray(threads.map(renderThread))
     }
 
   def convo(c: MsgConvo): JsObject =
-    Json.obj(
-      "user"      -> renderContact(c.contact),
-      "msgs"      -> c.msgs.map(renderMsg),
-      "relations" -> c.relations,
-      "postable"  -> c.postable
-    )
+    Json
+      .obj(
+        "user"      -> renderContact(c.contact),
+        "msgs"      -> c.msgs.map(renderMsg),
+        "relations" -> c.relations,
+        "postable"  -> c.postable
+      )
+      .add("modDetails" -> c.contactDetailsForMods)
 
   def renderMsg(msg: Msg): JsObject =
     Json.obj(
@@ -44,9 +47,13 @@ final class MsgJson(
       )
 
   private def withContacts(threads: List[MsgThread])(using me: Me): Fu[List[MsgThread.WithContact]] =
-    lightUserApi.asyncMany(threads.map(_.other)) map: users =>
-      threads.zip(users) map: (thread, userOption) =>
-        MsgThread.WithContact(thread, userOption | LightUser.fallback(thread.other into UserName))
+    lightUserApi
+      .asyncMany(threads.map(_.other))
+      .map: users =>
+        threads
+          .zip(users)
+          .map: (thread, userOption) =>
+            MsgThread.WithContact(thread, userOption | LightUser.fallback(thread.other.into(UserName)))
 
   private def renderThread(t: MsgThread.WithContact)(using me: Option[Me]) =
     Json.obj(
@@ -57,6 +64,6 @@ final class MsgJson(
     )
 
   private def renderContact(user: LightUser): JsObject =
-    LightUser
+    lila.common.Json.lightUser
       .writeNoId(user)
-      .add("online" -> isOnline(user.id))
+      .add("online" -> isOnline.exec(user.id))

@@ -1,19 +1,15 @@
-import { VNode } from 'snabbdom';
-import { Player, Status, Source, Clock } from 'game';
-import * as cg from 'chessground/types';
-import { ForecastData } from './forecast/interfaces';
-import { StudyPracticeData, Goal as PracticeGoal } from './study/practice/interfaces';
-import { RelayData } from './study/relay/interfaces';
-import { ChatCtrl } from 'chat';
-import { ExplorerOpts } from './explorer/interfaces';
-import { StudyData } from './study/interfaces';
-import { AnalyseSocketSend } from './socket';
-import { ExternalEngineInfo } from 'ceval';
-import * as Prefs from 'common/prefs';
-
-export type Seconds = number;
-
-export type { Key, Piece } from 'chessground/types';
+import type { VNode } from 'snabbdom';
+import type { Player, Status, Source, Clock } from 'game';
+import type { ForecastData } from './forecast/interfaces';
+import type { StudyPracticeData, Goal as PracticeGoal } from './study/practice/interfaces';
+import type { RelayData } from './study/relay/interfaces';
+import type { ChatCtrl } from 'chat';
+import type { ExplorerOpts } from './explorer/interfaces';
+import type { StudyDataFromServer } from './study/interfaces';
+import type { AnalyseSocketSend } from './socket';
+import type { ExternalEngineInfo } from 'ceval';
+import type { Coords, MoveEvent } from 'common/prefs';
+import type { EnhanceOpts } from 'common/richText';
 
 export interface NvuiPlugin {
   render(): VNode;
@@ -56,7 +52,7 @@ export interface AnalyseData {
 }
 
 export interface AnalysePref {
-  coords: Prefs.Coords;
+  coords: Coords;
   is3d?: boolean;
   showDests?: boolean;
   rookCastle?: boolean;
@@ -64,7 +60,8 @@ export interface AnalysePref {
   highlight?: boolean;
   showCaptured?: boolean;
   animationDuration?: number;
-  moveEvent: Prefs.MoveEvent;
+  keyboardMove: boolean;
+  moveEvent: MoveEvent;
 }
 
 export interface ServerEvalData {
@@ -75,7 +72,7 @@ export interface ServerEvalData {
 }
 
 export interface EvalHit {
-  fen: Fen;
+  fen: FEN;
   knodes: number;
   depth: number;
   pvs: Tree.PvDataServer[];
@@ -83,8 +80,7 @@ export interface EvalHit {
 }
 
 export interface EvalHitMulti extends EvalScore {
-  fen: Fen;
-  depth: number;
+  fen: FEN;
 }
 
 export interface EvalHitMultiArray {
@@ -97,7 +93,7 @@ export interface Game {
   status: Status;
   player: Color;
   turns: number;
-  fen: Fen;
+  fen: FEN;
   startedAtTurn?: number;
   source: Source;
   speed: Speed;
@@ -145,29 +141,30 @@ export interface AnalyseOpts {
   hunter: boolean;
   explorer: ExplorerOpts;
   socketSend: AnalyseSocketSend;
-  trans: Trans;
-  study?: StudyData;
+  study?: StudyDataFromServer;
   tagTypes?: string;
   practice?: StudyPracticeData;
   relay?: RelayData;
   $side?: Cash;
   $underboard?: Cash;
-  i18n: I18nDict;
   chat: {
-    parseMoves: boolean;
-    instance?: Promise<ChatCtrl>;
+    enhance: EnhanceOpts;
+    instance?: ChatCtrl;
   };
   wiki?: boolean;
   inlinePgn?: string;
   externalEngineEndpoint: string;
+  embed?: boolean;
+  socketUrl?: string;
+  socketVersion?: number;
 }
 
-export interface JustCaptured extends cg.Piece {
+export interface JustCaptured extends Piece {
   promoted?: boolean;
 }
 
 export interface EvalGetData {
-  fen: Fen;
+  fen: FEN;
   path: string;
   variant?: VariantKey;
   mpv?: number;
@@ -186,5 +183,3 @@ export interface AnalyseState {
   path: Tree.Path | undefined;
   flipped: boolean;
 }
-
-export type Redraw = () => void;

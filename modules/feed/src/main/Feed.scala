@@ -1,16 +1,19 @@
 package lila.feed
 
-import lila.Lila.{ *, given }
+import play.api.data.Form
 import reactivemongo.api.bson.*
 import reactivemongo.api.bson.Macros.Annotations.Key
+
 import java.time.format.{ DateTimeFormatter, FormatStyle }
+
+import lila.core.lilaism.Lilaism.*
+export lila.common.extensions.unapply
+
+import scalalib.paginator.Paginator
 import lila.db.dsl.{ *, given }
-import lila.common.paginator.Paginator
 import lila.db.paginator.Adapter
 import lila.memo.CacheApi
-import lila.common.config.{ Max, MaxPerPage }
-import play.api.data.Form
-import lila.user.Me
+import lila.core.user.FlairApi
 
 object Feed:
 
@@ -24,7 +27,7 @@ object Feed:
       flair: Option[Flair]
   ):
     lazy val rendered: Html = renderer(s"dailyFeed:${id}")(content)
-    lazy val dateStr        = dateFormatter print at
+    lazy val dateStr        = dateFormatter.print(at)
     lazy val title          = "Daily update - " + dateStr
     def published           = public && at.isBeforeNow
     def future              = at.isAfterNow
@@ -35,10 +38,10 @@ object Feed:
 
   type GetLastUpdates = () => List[Update]
 
-  import ornicar.scalalib.ThreadLocalRandom
-  def makeId = ThreadLocalRandom nextString 6
+  import scalalib.ThreadLocalRandom
+  def makeId = ThreadLocalRandom.nextString(6)
 
-final class FeedApi(coll: Coll, cacheApi: CacheApi)(using Executor):
+final class FeedApi(coll: Coll, cacheApi: CacheApi, flairApi: FlairApi)(using Executor):
 
   import Feed.*
 
@@ -47,7 +50,7 @@ final class FeedApi(coll: Coll, cacheApi: CacheApi)(using Executor):
   private object cache:
     private var mutableLastUpdates: List[Update] = Nil
     val store = cacheApi.unit[List[Update]]:
-      _.refreshAfterWrite(1 minute).buildAsyncFuture: _ =>
+      _.refreshAfterWrite(1.minute).buildAsyncFuture: _ =>
         coll
           .find($empty)
           .sort($sort.desc("at"))
@@ -68,15 +71,15 @@ final class FeedApi(coll: Coll, cacheApi: CacheApi)(using Executor):
   def get(id: ID): Fu[Option[Update]] = coll.byId[Update](id)
 
   def set(update: Update): Funit =
-    coll.update.one($id(update.id), update, upsert = true).void andDo cache.clear()
+    for _ <- coll.update.one($id(update.id), update, upsert = true) yield cache.clear()
 
   def delete(id: ID): Funit =
-    coll.delete.one($id(id)).void andDo cache.clear()
+    for _ <- coll.delete.one($id(id)) yield cache.clear()
 
   case class UpdateData(content: Markdown, public: Boolean, at: Instant, flair: Option[Flair]):
     def toUpdate(id: Option[ID]) = Update(id | makeId, content, public, at, flair)
 
-  def form(from: Option[Update])(using Me): Form[UpdateData] =
+  def form(from: Option[Update])(using MyId): Form[UpdateData] =
     import play.api.data.*
     import play.api.data.Forms.*
     import lila.common.Form.*
@@ -85,7 +88,7 @@ final class FeedApi(coll: Coll, cacheApi: CacheApi)(using Executor):
         "content" -> nonEmptyText(maxLength = 20_000).into[Markdown],
         "public"  -> boolean,
         "at"      -> ISOInstantOrTimestamp.mapping,
-        lila.user.FlairApi.formPair(anyFlair = true)
+        "flair"   -> flairApi.formField(anyFlair = true, asAdmin = true)
       )(UpdateData.apply)(unapply)
     from.fold(form)(u => form.fill(UpdateData(u.content, u.public, u.at, u.flair)))
 
@@ -98,7 +101,7 @@ final class FeedPaginatorBuilder(coll: Coll)(using Executor):
         collection = coll,
         selector =
           if includeAll then $empty
-          else $doc("public" -> true, "at" $lt nowInstant),
+          else $doc("public" -> true, "at".$lt(nowInstant)),
         projection = none,
         sort = $sort.desc("at")
       ),

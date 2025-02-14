@@ -1,9 +1,8 @@
 package lila.api
 
-import lila.chat.UserLine
-import lila.hub.actorApi.shutup.PublicSource
-import lila.tournament.{ Tournament, TournamentCache }
+import lila.core.shutup.PublicSource
 import lila.swiss.{ Swiss, SwissCache }
+import lila.tournament.{ Tournament, TournamentCache }
 
 /* Checks that a chat can still be posted to */
 final class ChatFreshness(tourCache: TournamentCache, swissCache: SwissCache)(using Executor):
@@ -14,9 +13,11 @@ final class ChatFreshness(tourCache: TournamentCache, swissCache: SwissCache)(us
     case _                           => fuTrue
 
   def of(tour: Tournament) =
-    tour.finishedSinceSeconds.forall:
-      _ < (tour.nbPlayers + 120) * 30
+    tour.finishedSinceSeconds match
+      case Some(finishedSinceSeconds) => finishedSinceSeconds < (tour.nbPlayers + 120) * 30
+      case None                       => tour.startsAt.isBefore(nowInstant.plusWeeks(1))
 
   def of(swiss: Swiss) =
-    swiss.finishedSinceSeconds.forall:
-      _ < (swiss.nbPlayers + 60) * 60
+    swiss.finishedSinceSeconds match
+      case Some(finishedSinceSeconds) => finishedSinceSeconds < (swiss.nbPlayers + 60) * 60
+      case None                       => swiss.startsAt.isBefore(nowInstant.plusWeeks(1))

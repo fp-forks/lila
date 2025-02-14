@@ -1,7 +1,6 @@
-/// <reference types="../../site/types/tablesort" />
 import tablesort from 'tablesort';
 
-export default function extendTablesortNumber() {
+export default function extendTablesortNumber(): void {
   tablesort.extend(
     'number',
     (item: string) => item.match(/^[-+]?(\d)*-?([,\.]){0,1}-?(\d)+([E,e][\-+][\d]+)?%?$/),

@@ -1,7 +1,5 @@
 package lila.forum
 
-import lila.user.User
-
 case class ForumCateg(
     _id: ForumCategId, // slug
     name: String,
@@ -48,14 +46,11 @@ case class ForumCateg(
       lastPostIdTroll = lastPostIdTroll
     )
 
-  def slug = id
-
 object ForumCateg:
+
+  export lila.core.forum.ForumCateg.*
 
   val ublogId      = ForumCategId("community-blog-discussions")
   val diagnosticId = ForumCategId("diagnostic")
 
-  def isTeamSlug(id: ForumCategId) = id.value.startsWith("team-")
-
-  def toTeamId(id: ForumCategId): Option[TeamId] = isTeamSlug(id) option TeamId(id.value.drop(5))
-  def fromTeamId(id: TeamId): ForumCategId       = ForumCategId(s"team-$id")
+  def fromTeamId(id: TeamId): ForumCategId = ForumCategId(s"team-$id")

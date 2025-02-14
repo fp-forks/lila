@@ -2,11 +2,11 @@ package lila.push
 
 import akka.actor.*
 import com.softwaremill.macwire.*
-import lila.common.autoconfig.{ *, given }
 import play.api.Configuration
 import play.api.libs.ws.StandaloneWSClient
 
-import lila.common.config.*
+import lila.common.autoconfig.{ *, given }
+import lila.core.config.*
 
 @Module
 final private class PushConfig(
@@ -21,12 +21,13 @@ final class Env(
     appConfig: Configuration,
     ws: StandaloneWSClient,
     db: lila.db.Db,
-    getLightUser: lila.common.LightUser.GetterFallback,
-    proxyRepo: lila.round.GameProxyRepo,
-    roundMobile: lila.round.RoundMobile,
-    gameRepo: lila.game.GameRepo,
-    notifyAllows: lila.notify.GetNotifyAllows,
-    postApi: lila.forum.ForumPostApi
+    gameProxy: lila.core.game.GameProxy,
+    roundJson: lila.core.round.RoundJson,
+    gameRepo: lila.core.game.GameRepo,
+    namer: lila.core.game.Namer,
+    notifyAllows: lila.core.notify.GetNotifyAllows,
+    postApi: lila.core.forum.ForumPostApi,
+    getLightUser: lila.core.LightUser.GetterFallback
 )(using Executor, Scheduler):
 
   private val config = appConfig.get[PushConfig]("push")(AutoConfig.loader)
@@ -45,7 +46,7 @@ final class Env(
   private lazy val pushApi: PushApi = wire[PushApi]
 
   private def logUnit(f: Fu[?]): Unit =
-    f logFailure logger
+    f.logFailure(logger)
     ()
   lila.common.Bus.subscribeFun(
     "finishGame",
@@ -56,21 +57,21 @@ final class Env(
     "tourSoon",
     "notifyPush"
   ):
-    case lila.game.actorApi.FinishGame(game, _) =>
-      logUnit { pushApi finish game }
-    case lila.hub.actorApi.round.CorresMoveEvent(move, _, pushable, _, _) if pushable =>
-      logUnit { pushApi move move }
-    case lila.hub.actorApi.round.CorresTakebackOfferEvent(gameId) =>
-      logUnit { pushApi takebackOffer gameId }
-    case lila.hub.actorApi.round.CorresDrawOfferEvent(gameId) =>
-      logUnit { pushApi drawOffer gameId }
-    case lila.challenge.Event.Create(c) =>
-      logUnit { pushApi challengeCreate c }
-    case lila.challenge.Event.Accept(c, joinerId) =>
+    case lila.core.game.FinishGame(game, _) =>
+      logUnit { pushApi.finish(game) }
+    case lila.core.round.CorresMoveEvent(move, _, pushable, _, _) if pushable =>
+      logUnit { pushApi.move(move) }
+    case lila.core.round.CorresTakebackOfferEvent(gameId) =>
+      logUnit { pushApi.takebackOffer(gameId) }
+    case lila.core.round.CorresDrawOfferEvent(gameId) =>
+      logUnit { pushApi.drawOffer(gameId) }
+    case lila.core.challenge.Event.Create(c) =>
+      logUnit { pushApi.challengeCreate(c) }
+    case lila.core.challenge.Event.Accept(c, joinerId) =>
       logUnit { pushApi.challengeAccept(c, joinerId) }
-    case lila.game.actorApi.CorresAlarmEvent(pov) =>
-      logUnit { pushApi corresAlarm pov }
-    case lila.notify.PushNotification(to, content, _) =>
-      logUnit { pushApi notifyPush (to, content) }
-    case t: lila.hub.actorApi.push.TourSoon =>
-      logUnit { pushApi tourSoon t }
+    case lila.core.game.CorresAlarmEvent(userId, pov: Pov, opponent) =>
+      logUnit { pushApi.corresAlarm(pov) }
+    case lila.core.notify.PushNotification(to, content, _) =>
+      logUnit { pushApi.notifyPush(to, content) }
+    case t: lila.core.misc.push.TourSoon =>
+      logUnit { pushApi.tourSoon(t) }

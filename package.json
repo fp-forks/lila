@@ -17,37 +17,46 @@
     "url": "https://github.com/lichess-org/lila/issues"
   },
   "homepage": "https://lichess.org",
+  "packageManager": "pnpm@10.2.1+sha512.398035c7bd696d0ba0b10a688ed558285329d27ea994804a52bad9167d8e3a72bcb993f9699585d3ca25779ac64949ef422757a6c31102c12ab932e5cbe5cc92",
   "engines": {
-    "node": ">=14",
-    "pnpm": "^8.7"
-  },
-  "lint-staged": {
-    "*.{js,ts,md,json,scss}": "prettier --write"
+    "node": ">=22.6",
+    "pnpm": "^10"
   },
   "dependencies": {
-    "@types/cash": "workspace:*",
     "@types/lichess": "workspace:*",
-    "@types/node": "^20.9.1",
-    "@types/web": "^0.0.119",
-    "@typescript-eslint/eslint-plugin": "^6.11.0",
-    "@typescript-eslint/parser": "^6.11.0",
+    "@types/web": "^0.0.201",
+    "@typescript-eslint/eslint-plugin": "^8.23.0",
+    "@typescript-eslint/parser": "^8.23.0",
     "ab": "github:lichess-org/ab-stub",
-    "chessground": "^9.0.4",
-    "eslint": "^8.54.0",
-    "lint-staged": "^15.1.0",
-    "prettier": "3.0.2",
-    "typescript": "^5.2.2"
+    "chessground": "^9.1.1",
+    "chessops": "^0.14.2",
+    "eslint": "^9.20.0",
+    "lint-staged": "^15.4.3",
+    "onchange": "^7.1.0",
+    "prettier": "^3.4.2",
+    "snabbdom": "3.5.1",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
   },
+  "//": [
+    "snabbdom pinned to 3.5.1 until https://github.com/snabbdom/snabbdom/issues/1114 is resolved",
+    "typescript above just to allow manual tsc. ui/.build/package.json's typesript version is the truth"
+  ],
   "scripts": {
-    "format": "prettier --write --log-level warn .",
-    "check-format": "prettier --check --log-level warn .",
-    "add-hooks": "git config --add core.hooksPath bin/git-hooks",
-    "remove-hooks": "git config --unset core.hooksPath bin/git-hooks",
-    "lint": "eslint . --ext .ts",
+    "format": "prettier --config=ui/.prettierrc.json --cache --write --log-level=warn .",
+    "check-format": "prettier --config=ui/.prettierrc.json --cache --check --log-level=warn .",
+    "watch-format": "onchange \"**/*\" -- prettier --config=ui/.prettierrc.json --cache --write --log-level=warn {{changed}}",
+    "add-hooks": "git config get --all core.hooksPath | grep -Fxq bin/git-hooks || git config set --append core.hooksPath bin/git-hooks",
+    "remove-hooks": "git config unset --value=bin/git-hooks core.hooksPath || true",
+    "lint": "eslint --config=ui/eslint.config.mjs --cache --cache-location=ui/.eslintcache",
+    "lint-staged": "lint-staged --config=ui/lint-staged.config.mjs",
     "journal": "journalctl --user -fu lila -o cat",
     "metals": "tail -F .metals/metals.log | stdbuf -oL cut -c 21- | rg -v '(notification for request|handleCancellation)'",
     "serverlog": "pnpm journal & pnpm metals",
-    "multilog": "pnpm serverlog & ui/build -r",
-    "minilog": "pnpm journal | grep -E -v fishnet & ui/build -dr"
+    "piece-css": "pnpx tsx bin/gen/piece-css.ts",
+    "i18n-file-gen": "pnpx tsx bin/i18n-file-gen.ts",
+    "test": "vitest run --config=ui/vitest.config.mts",
+    "test:watch": "vitest --config=ui/vitest.config.mts",
+    "multilog": "pnpm serverlog & ui/build -w"
   }
 }

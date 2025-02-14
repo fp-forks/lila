@@ -3,13 +3,15 @@ package lila.socket
 import chess.Centis
 import com.github.blemale.scaffeine.Cache
 
-object UserLagCache:
+import lila.core.socket.userLag.*
+
+final class UserLagCache(using Executor):
 
   private val cache: Cache[UserId, Centis] = lila.memo.CacheApi.scaffeineNoScheduler
-    .expireAfterWrite(15 minutes)
+    .expireAfterWrite(15.minutes)
     .build[UserId, Centis]()
 
-  def put(userId: UserId, lag: Centis): Unit =
+  val put: Put = (userId, lag) =>
     if lag.centis >= 0
     then
       cache.put(
@@ -17,12 +19,12 @@ object UserLagCache:
         cache
           .getIfPresent(userId)
           .fold(lag):
-            _ avg lag
+            _.avg(lag)
       )
 
-  export cache.{ getIfPresent as get }
+  export cache.getIfPresent as get
 
-  def getLagRating(userId: UserId): Option[Int] =
+  val getLagRating: GetLagRating = userId =>
     Centis
       .raw(get(userId))
       .map: c =>

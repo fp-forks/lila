@@ -1,6 +1,6 @@
-import { h, Hooks, VNode } from 'snabbdom';
+import { h, type Hooks, type VNode } from 'snabbdom';
 import { bind } from './snabbdom';
-import { toggle as baseToggle } from './common';
+import { toggle as baseToggle, type Toggle } from './common';
 import * as xhr from './xhr';
 
 export interface ToggleSettings {
@@ -13,11 +13,11 @@ export interface ToggleSettings {
   change(v: boolean): void;
 }
 
-export function toggle(t: ToggleSettings, trans: Trans, redraw: () => void) {
+export function toggle(t: ToggleSettings, redraw: () => void): VNode {
   const fullId = 'abset-' + t.id;
   return h(
     'div.setting.' + fullId + (t.cls ? '.' + t.cls : ''),
-    t.title ? { attrs: { title: trans.noarg(t.title) } } : {},
+    t.title ? { attrs: { title: t.title } } : {},
     [
       h('div.switch', [
         h('input#' + fullId + '.cmn-toggle', {
@@ -26,9 +26,20 @@ export function toggle(t: ToggleSettings, trans: Trans, redraw: () => void) {
         }),
         h('label', { attrs: { for: fullId } }),
       ]),
-      h('label', { attrs: { for: fullId } }, trans.noarg(t.name)),
+      h('label', { attrs: { for: fullId } }, t.name),
     ],
   );
+}
+
+export function toggleBoxInit(): void {
+  $('.toggle-box--toggle:not(.toggle-box--ready)').each(function (this: HTMLFieldSetElement) {
+    const toggle = () => this.classList.toggle('toggle-box--toggle-off');
+    $(this)
+      .addClass('toggle-box--ready')
+      .children('legend')
+      .on('click', toggle)
+      .on('keypress', e => e.key === 'Enter' && toggle());
+  });
 }
 
 export function rangeConfig(read: () => number, write: (value: number) => void): Hooks {
@@ -45,40 +56,21 @@ export function rangeConfig(read: () => number, write: (value: number) => void):
   };
 }
 
-export const boolPrefXhrToggle = (prefKey: string, val: boolean, effect: () => void = lichess.reload) =>
+export const boolPrefXhrToggle = (prefKey: string, val: boolean, effect: () => void = site.reload): Toggle =>
   baseToggle(val, async v => {
     await xhr.text(`/pref/${prefKey}`, { method: 'post', body: xhr.form({ [prefKey]: v ? '1' : '0' }) });
     effect();
   });
 
-export function wireCropDialog(args?: {
-  selectClicks?: Cash;
-  selectDrags?: Cash;
-  aspectRatio: number;
-  max?: { megabytes?: number; pixels?: number };
-  post?: { url: string; field?: string };
-  onCropped?: (result: Blob | boolean) => void;
-}) {
-  if (!args) {
-    lichess.asset.loadEsm('cropDialog'); // preload
-    return;
-  }
-  const cropOpts = { ...args };
-  if (!cropOpts.onCropped) cropOpts.onCropped = () => lichess.reload();
-  cropOpts.max = { ...(cropOpts.max || {}), megabytes: 6 }; // mirrors the nginx config `client_max_body_size`
-  cropOpts.selectClicks?.on('click', () => lichess.asset.loadEsm('cropDialog', { init: cropOpts }));
-  cropOpts.selectDrags?.on('dragover', e => e.preventDefault());
-  cropOpts.selectDrags?.on('drop', e => {
-    e.preventDefault();
-    for (const item of e.dataTransfer.items) {
-      if (item.kind === 'file' && item.type.startsWith('image/')) {
-        lichess.asset.loadEsm('cropDialog', { init: { ...cropOpts, source: item.getAsFile() } });
-      } else if (item.kind === 'string' && item.type === 'text/uri-list') {
-        item.getAsString((uri: string) =>
-          lichess.asset.loadEsm('cropDialog', { init: { ...cropOpts, source: uri } }),
-        );
-      } else continue;
-      break;
+export function stepwiseScroll(inner: (e: WheelEvent, scroll: boolean) => void): (e: WheelEvent) => void {
+  let scrollTotal = 0;
+  return (e: WheelEvent) => {
+    scrollTotal += e.deltaY * (e.deltaMode ? 40 : 1);
+    if (Math.abs(scrollTotal) >= 4) {
+      inner(e, true);
+      scrollTotal = 0;
+    } else {
+      inner(e, false);
     }
-  });
+  };
 }

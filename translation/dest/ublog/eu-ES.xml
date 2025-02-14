@@ -4,9 +4,13 @@
   <string name="friendBlogs">Lagunen blogak</string>
   <string name="likedBlogs">Atsegin dituzun sarrerak</string>
   <string name="blogTopics">Blogeko gaiak</string>
+  <plurals name="blogPosts">
+    <item quantity="one">%s blog sarrera</item>
+    <item quantity="other">%s blog sarrera</item>
+  </plurals>
   <string name="lichessOfficialBlog">Lichessen Blog Ofiziala</string>
   <string name="continueReadingPost">Jarraitu sarrera hau irakurtzen</string>
-  <string name="lichessBlogPostsFromXYear" comment="Appears on a list of posts from the official Lichess Blog, which were published in a specific year.&#10;&#10;%s is the specific year of posts from the official blog (e.g. 2021).">%s urteko Lichessen blogeko sarrerak</string>
+  <string name="lichessBlogPostsFromXYear">%s urteko Lichessen blogeko sarrerak</string>
   <string name="previousBlogPosts">Aurreko sarrerak</string>
   <string name="xBlog">%s erabiltzailearen Bloga</string>
   <string name="newPost">Sarrera berria</string>
@@ -21,6 +25,8 @@
   <string name="createBlogDiscussionHelp">Foroko hari berri bat irekiko da zure sarreraren inguruan komentarioak egiteko</string>
   <string name="publishOnYourBlog">Argitaratu zure blogean</string>
   <string name="publishHelp">Aukeratuta badago, sarrera zure blogean agertuko da. Bestela pribatua izango da eta zirriborroen zerrendan egongo da</string>
+  <string name="stickyPost" comment="Label for the toggle that can make this blog post sticky.">Itsatsitako sarrera</string>
+  <string name="stickyPostHelp">Aukeratuta badago, sarrera hau zure profileko azken sarreren zerrendan agertuko da.</string>
   <plurals name="publishedNbBlogPosts">
     <item quantity="one">Sarrera bat argitaratu da blogean</item>
     <item quantity="other">%s sarrera argitaratu dira blogean</item>
@@ -44,7 +50,6 @@
   <string name="imageAlt">Irudiaren ordezko testua</string>
   <string name="imageCredit">Irudiaren oina</string>
   <string name="deleteBlog">Sarrera hau betiko ezabatu</string>
-  <string name="deleteImage">Ezabatu irudia</string>
   <string name="safeToUseImages">Webgune hauetako irudiak erabili ditzakezu: </string>
   <string name="selectPostTopics">Aukeratu zure sarreraren gaiak</string>
   <string name="useImagesYouMadeYourself">Zuk egindako irudiak, egindako argazkiak, Lichessen pantaila-irudiak eta beste norbaiten copyrightik ez duen edozer erabili dezakeu.</string>
@@ -52,4 +57,5 @@
   <string name="inappropriateContentAccountClosed">Errespetua galduz gero, zure kontua itxiko dugu.</string>
   <string name="blogTips">Blogeko sarrerak idazteko gure aholkuak</string>
   <string name="discussThisBlogPostInTheForum">Eztabaidatu artikulu honi buruz foroan</string>
+  <string name="youBlockedByBlogAuthor">Blogaren egileak blokeatu egin zaitu.</string>
 </resources>

@@ -50,14 +50,12 @@
   <string name="insufficientMaterial">Không đủ quân để chiếu hết</string>
   <string name="fideMate">Theo Luật cờ vua của FIDE §6.9, nếu tình huống chiếu hết có thể xảy ra với bất kì thứ tự nước đi hợp lệ nào sau đó, ván cờ không được tính là hòa</string>
   <string name="knightMate">Có thể xẩy ra trường hợp chiếu hết chỉ với một quân mã hoặc một quân tượng, nếu đối thủ có nhiều hơn chỉ có vua trên bàn cờ.</string>
-  <string name="noRatingPoints">Không có hệ số Elo nào được tăng</string>
+  <string name="noRatingPoints">Không có hệ số nào được tăng</string>
   <string name="ratedGame">Xin hãy chắc việc bạn chơi ván cờ xếp hạng. Các ván đấu thường sẽ không ảnh hưởng đến hệ số của người chơi.</string>
   <string name="botRatingAbuse">Trong một số trường hợp nhất định khi chơi với tài khoản Bot, ván cờ có xếp hạng có thể không trao điểm nếu xác định được rằng người chơi đang lạm dụng Bot để lấy điểm xếp hạng.</string>
   <string name="errorPage">Trang lỗi</string>
   <string name="reportErrorPage">Nếu bạn gặp một trang lỗi, bạn có thể báo cáo nó:</string>
-  <string name="wantBroadcastTournament">Tôi muốn phát sóng một giải đấu</string>
   <string name="learnHowToMakeBroadcasts">Tìm hiểu cách thức phát sóng trên Lichess</string>
-  <string name="contactAboutOfficialBroadcasts">Bạn cũng có thể liên hệ đội ngũ phát sóng về các chương trình phát sóng chính thức.</string>
   <string name="banAppeal">Khiếu nại lệnh cấm, hạn chế hoặc chặn IP</string>
   <string name="engineAppeal">Đánh dấu gian lận hoặc dùng động cơ máy tính</string>
   <string name="sendAppealTo">Bạn có thể gửi khiếu nại đến %s.</string>
@@ -71,7 +69,7 @@
   <string name="buyingLichess">Mua Lichess</string>
   <string name="authorizationToUse">Ủy quyền sử dụng Lichess</string>
   <string name="welcomeToUse">Bạn được hoan nghênh xử dụng Lichess cho các hoạt động của mình, kể cả vì mục đích thương mại.</string>
-  <string name="videosAndBooks">Bạn có thể hiển thị nó trong video của mình, và có thể in ảnh chụp Lichess trong sách của bạn.</string>
+  <string name="videosAndBooks">Bạn có thể hiển thị nó trong thước phim của mình, và có thể in ảnh chụp Lichess trong sách của bạn.</string>
   <string name="creditAppreciated">Tín dụng được đánh giá cao nhưng không bắt buộc.</string>
   <string name="noneOfTheAbove">Không phải các phương án trên</string>
   <string name="sendEmailAt">Hãy gửi email cho chúng tôi tại %s.</string>

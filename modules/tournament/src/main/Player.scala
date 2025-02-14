@@ -1,12 +1,13 @@
 package lila.tournament
 
-import ornicar.scalalib.ThreadLocalRandom
+import scalalib.ThreadLocalRandom
+import chess.IntRating
+import chess.rating.RatingProvisional
 
-import lila.common.LightUser
-import lila.rating.PerfType
-import lila.user.User
+import lila.core.LightUser
+import lila.core.user.WithPerf
 
-private[tournament] case class Player(
+case class Player(
     _id: TourPlayerId, // random
     tourId: TourId,
     userId: UserId,
@@ -15,26 +16,25 @@ private[tournament] case class Player(
     withdraw: Boolean = false,
     score: Int = 0,
     fire: Boolean = false,
-    performance: Int = 0,
-    team: Option[TeamId] = None
+    performance: Option[IntRating] = None,
+    team: Option[TeamId] = None,
+    bot: Boolean = false
 ):
 
   inline def id = _id
 
   def active = !withdraw
 
-  def is(uid: UserId): Boolean   = uid == userId
-  def is(user: User): Boolean    = is(user.id)
-  def is(other: Player): Boolean = is(other.userId)
-
   def doWithdraw = copy(withdraw = true)
   def unWithdraw = copy(withdraw = false)
 
-  def magicScore = score * 10000 + (performanceOption | rating.value)
+  def magicScore = score * 10000 + (performance | rating).value
 
-  def performanceOption = performance > 0 option performance
+  def showRating = s"$rating${provisional.yes.so("?")}"
 
-private[tournament] object Player:
+object Player:
+
+  given UserIdOf[Player] = _.userId
 
   case class WithUser(player: Player, user: User)
 
@@ -42,13 +42,15 @@ private[tournament] object Player:
 
   private[tournament] def make(
       tourId: TourId,
-      user: User.WithPerf,
-      team: Option[TeamId]
+      user: WithPerf,
+      team: Option[TeamId],
+      bot: Boolean
   ): Player = Player(
     _id = TourPlayerId(ThreadLocalRandom.nextString(8)),
     tourId = tourId,
     userId = user.id,
     rating = user.perf.intRating,
     provisional = user.perf.provisional,
-    team = team
+    team = team,
+    bot = bot
   )

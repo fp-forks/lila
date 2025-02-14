@@ -1,14 +1,16 @@
 package lila.push
 
-import reactivemongo.api.bson.*
 import play.api.mvc.RequestHeader
+import reactivemongo.api.bson.*
 
 import lila.db.dsl.{ *, given }
-import lila.user.User
 
 final private class DeviceApi(coll: Coll)(using Executor):
 
   private given BSONDocumentHandler[Device] = Macros.handler
+
+  lila.common.Bus.sub[lila.core.user.UserDelete]: del =>
+    coll.delete.one($doc("userId" -> del.id)).void
 
   private[push] def findByDeviceId(deviceId: String): Fu[Option[Device]] =
     coll.find($id(deviceId)).one[Device]
@@ -26,7 +28,7 @@ final private class DeviceApi(coll: Coll)(using Executor):
       .list(max)
 
   private[push] def findLastOneByUserId(platform: String)(userId: UserId): Fu[Option[Device]] =
-    findLastManyByUserId(platform, 1)(userId) dmap (_.headOption)
+    findLastManyByUserId(platform, 1)(userId).dmap(_.headOption)
 
   def register(user: User, platform: String, deviceId: String)(using req: RequestHeader) =
     lila.mon.push.register.in(platform).increment()
