@@ -230,7 +230,6 @@ export default class AnalyseCtrl implements CevalHandler {
         redraw();
       }
     });
-    this.asyncLoadThenShow();
     (window as any).lichess.analysis = {
       playUci: this.playUci,
       navigate: this.navigate,
@@ -242,7 +241,6 @@ export default class AnalyseCtrl implements CevalHandler {
     this.data = data;
     this.synthetic = data.game.id === 'synthetic';
     this.ongoing = !this.synthetic && playable(data);
-    this.asyncReady = false;
     const prevTree = merge && this.tree.root;
     this.tree = makeTree(treeReconstruct(this.data.treeParts, this.variantKey, this.data.sidelines));
     if (prevTree) this.tree.merge(prevTree);
@@ -260,6 +258,7 @@ export default class AnalyseCtrl implements CevalHandler {
     this.fork = new ForkCtrl(this);
 
     site.sound.preloadBoardSounds();
+    this.asyncLoadThenShow();
   }
 
   get variantKey(): VariantKey {
@@ -496,7 +495,6 @@ export default class AnalyseCtrl implements CevalHandler {
     this.initCeval();
     this.instanciateEvalCache();
     this.cgVersion.js++;
-    this.asyncLoadThenShow();
   }
 
   changePgn(pgn: string, andReload: boolean): AnalyseData | undefined {
@@ -1099,7 +1097,10 @@ export default class AnalyseCtrl implements CevalHandler {
   };
 
   private async asyncLoadThenShow() {
-    await this.idbTree.merge();
+    this.asyncReady = false;
+    const tree = this.tree;
+    await this.idbTree.load();
+    if (this.tree !== tree) return;
     this.asyncReady = true;
     this.idbTree.revealNode();
     this.setAutoShapes();

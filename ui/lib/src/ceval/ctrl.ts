@@ -287,7 +287,7 @@ export class CevalCtrl {
     const emitter = throttleWithFlush(125, (ev: LocalEval, meta: EvalMeta) => {
       this.curEval = ev;
       if (ev.bestmove && ev.bestmove !== '(none)' && working.movetime !== false) {
-        ev.millis = Math.max(ev.millis, working.movetime);
+        ev.millis = Math.max(ev.millis, working.movetime); // ensure bestmove eval matches movetime target
       }
       if (!working.fen) {
         working.fen = ev.fen;

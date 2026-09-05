@@ -114,7 +114,7 @@ export class IdbTree {
     return this.cevalDb().then(db => db.put([id, path], { path, ceval }));
   }
 
-  async merge(): Promise<void> {
+  async load(): Promise<void> {
     if (this.noop || !('indexedDB' in window) || !window.indexedDB) return;
     try {
       const id = this.id;
@@ -158,7 +158,7 @@ export class IdbTree {
   }
 
   private get id(): string {
-    return this.ctrl.study?.data.chapter.id ?? this.ctrl.data.game.id;
+    return this.ctrl.opts.study?.chapter.id ?? this.ctrl.data.game.id;
   }
 
   private get noop(): boolean {
