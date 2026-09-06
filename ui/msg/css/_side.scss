@@ -54,6 +54,8 @@
       @extend %flex-center-nowrap;
 
       cursor: pointer;
+      padding-inline-start: 0.75em;
+      gap: 0.5ch;
 
       &:hover {
         background: color-mix(in oklab, $c-secondary 15%, $c-bg);
