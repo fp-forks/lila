@@ -16,16 +16,14 @@
 }
 
 .svg-icon {
+  @include icon-mask-only(var(---icon-src));
+
   display: inline-block;
   background-color: currentcolor;
-
-  @include icon-mask-only(var(---icon-src));
-}
-
-.svg-icon {
   opacity: 0.9;
   width: 1.2em;
   aspect-ratio: 1;
+  pointer-events: none;
 
   &.large {
     width: 1.8rem;
