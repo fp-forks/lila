@@ -65,12 +65,14 @@ object UserInfo:
       ).mapN(Social.apply)
 
     def messageable(userId: UserId)(using me: Me): Fu[Boolean] =
-      prefApi
-        .getMessage(userId)
-        .flatMap:
-          case lila.core.pref.Message.NEVER => fuccess(false)
-          case lila.core.pref.Message.FRIEND => relationApi.fetchFollows(userId, me.userId)
-          case lila.core.pref.Message.ALWAYS => fuccess(true)
+      if Granter(_.PublicMod) then fuTrue
+      else
+        prefApi
+          .getMessage(userId)
+          .flatMap:
+            case lila.core.pref.Message.NEVER => fuccess(false)
+            case lila.core.pref.Message.FRIEND => relationApi.fetchFollows(userId, me.userId)
+            case lila.core.pref.Message.ALWAYS => fuccess(true)
 
   case class NbGames(
       crosstable: Option[Crosstable.WithMatchup],
@@ -129,7 +131,7 @@ object UserInfo:
         showRatings
           .so(ratingChartApi(user, computeIfNeeded = ctx.isAuth))
           .mon(lila.mon.user.segment("ratingChart")),
-        (!user.is(UserId.lichess) && !user.isBot).so:
+        (full && user.isnt(UserId.lichess) && !user.isBot).so:
           postApi.nbByUser(user.id).mon(lila.mon.user.segment("nbForumPosts"))
         ,
         (withBlog && full).so(ublogApi.userBlogPreviewFor(user, 3)),
