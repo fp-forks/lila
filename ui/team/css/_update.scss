@@ -18,14 +18,13 @@ body {
   @include prevent-select;
 
   flex: 0 0 50ch;
+  background: $c-bg-zebra;
+  overflow: hidden;
+  border-inline-end: $border;
 
   @media (max-width: at-most($medium)) {
     flex: 0 0 40ch;
   }
-
-  background: $c-bg-zebra;
-  overflow: hidden;
-  border-inline-end: $border;
 
   ::-webkit-scrollbar,
   ::-webkit-scrollbar-corner {
