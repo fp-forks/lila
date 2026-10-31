@@ -26,6 +26,10 @@
     font-weight: bold;
   }
 
+  pearl.threat {
+    color: hsla(from $c-bad h s l / 0.75);
+  }
+
   .is-red::before {
     vertical-align: -3px;
   }
@@ -66,6 +70,24 @@
       &::before {
         vertical-align: top;
       }
+    }
+
+    .stop {
+      width: 11px;
+      height: 11px;
+      margin-inline: 1px 5px;
+      vertical-align: -1px;
+      border-radius: 2px;
+      background: #f55;
+      background: color-mix(in oklab, $c-dimmer 8%, #f55);
+      box-shadow:
+        0 1px 1px #4007,
+        0 -1px #faa5;
+    }
+
+    .stop:active,
+    .deeper:active::before {
+      filter: brightness(0.8);
     }
   }
 

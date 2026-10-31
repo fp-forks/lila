@@ -1,6 +1,6 @@
 package lila.ui
 
-import chess.{ Clock, Color, Rated, Outcome }
+import chess.{ Clock, Color, Outcome, Rated }
 
 import lila.core.LightUser
 import lila.core.game.{ Game, LightPlayer, Namer, Player }
@@ -90,7 +90,7 @@ trait GameHelper:
             case (_, Some(name)) => name
             case _ => trans.site.anonymous()
           ,
-          player.rating.ifTrue(withRating && ctx.pref.showRatings).map { rating => s" ($rating)" },
+          player.rating.ifTrue(withRating && ctx.pref.showRatings).map(rating => s" ($rating)"),
           statusIcon
         )
       case Some(user) =>

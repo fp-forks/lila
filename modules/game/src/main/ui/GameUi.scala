@@ -7,9 +7,9 @@ import chess.format.pgn.PgnStr
 import lila.core.game.{ Game, Player }
 import lila.core.i18n.I18nKey
 import lila.game.GameExt.*
+import lila.game.Player.nameSplit
 import lila.ui.*
 import lila.ui.ScalatagsTemplate.{ *, given }
-import lila.game.Player.nameSplit
 
 final class GameUi(helpers: Helpers):
   import helpers.{ *, given }
@@ -76,7 +76,7 @@ final class GameUi(helpers: Helpers):
           withRating.option(span(cls := "rating")(lila.game.Namer.ratingString(pov.player)))
         ),
         if pov.game.finished then renderResult(pov)
-        else pov.game.clock.map { renderClock(_, pov.color) }
+        else pov.game.clock.map(renderClock(_, pov.color))
       )
 
     private def renderResult(pov: Pov) =
@@ -319,7 +319,7 @@ final class GameUi(helpers: Helpers):
       div(cls := s"player ${player.color.name}"):
         player.userId
           .flatMap: uid =>
-            player.rating.map { (uid, _) }
+            player.rating.map((uid, _))
           .map: (userId, rating) =>
             frag(
               userIdLink(userId.some, withOnline = false),

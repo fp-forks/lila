@@ -41,16 +41,16 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1790690469,
-        "narHash": "sha256-q/a5+ss4XaCIx35BHQ7ZnvRjaC774jk0EvHe1xuF9co=",
+        "lastModified": 1790988805,
+        "narHash": "sha256-B943e8TJDUcjuSZGMpqeD6Y4bfvDKZs9RGIqCPaDolE=",
         "owner": "momiji-rs",
         "repo": "sasso",
-        "rev": "25c5c729252fc5f62a8c953c7655a848e371c779",
+        "rev": "a800e12c8e0e53975060d1e74a0716a170315a01",
         "type": "github"
       },
       "original": {
         "owner": "momiji-rs",
-        "ref": "v0.19.2",
+        "ref": "v0.21.0",
         "repo": "sasso",
         "type": "github"
       }

@@ -80,11 +80,11 @@
   }
 
   .filter-and-sort {
-    gap: 2rem;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    gap: 1em;
 
-    > span {
-      flex-wrap: nowrap;
-      white-space: nowrap;
+    .sort {
       gap: 0.6em;
     }
   }
