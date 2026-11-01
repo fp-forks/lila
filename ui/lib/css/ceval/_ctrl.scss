@@ -73,16 +73,11 @@
     }
 
     .stop {
-      width: 11px;
-      height: 11px;
+      width: 1em;
+      height: 1em;
       margin-inline: 1px 5px;
       vertical-align: -1px;
-      border-radius: 2px;
-      background: #f55;
-      background: color-mix(in oklab, $c-dimmer 8%, #f55);
-      box-shadow:
-        0 1px 1px #4007,
-        0 -1px #faa5;
+      background-image: url('../images/buttons/pause.svg');
     }
 
     .stop:active,
