@@ -13,6 +13,8 @@ trait GameHelper:
 
   def gameOpening: (Game, Boolean) => Option[_root_.chess.opening.Opening]
 
+  val gameLink = a(noFollow)
+
   def titleGame(g: Game) =
     val speed = chess.Speed(g.clock.map(_.config)).name
     val variant = g.variant.exotic.so(s" ${g.variant.name}")

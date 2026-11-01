@@ -14,8 +14,6 @@ import lila.ui.ScalatagsTemplate.{ *, given }
 final class GameUi(helpers: Helpers):
   import helpers.{ *, given }
 
-  val gameLink = a(noFollow)
-
   object mini:
     private val dataState = attr("data-state")
     private val dataLive = attr("data-live")
