@@ -406,7 +406,7 @@ export class CevalCtrl {
       this.snapshotPerformance(ev);
       if (!working.fen) {
         working.fen = ev.fen;
-        storage.fire('ceval.fen', ev.fen); // will pause other tabs
+        if (!working.background) storage.fire('ceval.fen', ev.fen); // will pause other tabs
       }
       const color = meta.ply % 2 === (meta.threatMode ? 1 : 0) ? 'white' : 'black';
       ev.pvs.sort((a, b) => povChances(color, b) - povChances(color, a));
