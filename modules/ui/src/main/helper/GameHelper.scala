@@ -117,7 +117,7 @@ trait GameHelper:
   def gameResult(game: Game) =
     Outcome.showResult(game.finished.option(Outcome(game.winnerColor)))
 
-  def gameLink(
+  def gameUrl(
       game: Game,
       color: Color,
       ownerLink: Boolean = false,
@@ -129,8 +129,6 @@ trait GameHelper:
       owner.fold(routes.Round.watcher(game.id, color)): o =>
         routes.Round.player(game.fullIdOf(o.color))
   }.toString
-
-  def gameLink(pov: Pov)(using Context): String = gameLink(pov.game, pov.color)
 
   def aiName(level: Int)(using Translate): String =
     trans.site.aiNameLevelAiLevel.txt("Stockfish", level)
