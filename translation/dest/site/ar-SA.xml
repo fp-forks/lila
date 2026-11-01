@@ -638,6 +638,7 @@
   <string name="standByX">تأهب يا %s، جارٍ مزاوجة اللاعبين، استعد!</string>
   <string name="pause">الإيقاف المؤقت</string>
   <string name="resume">استئناف</string>
+  <string name="stop">توقّف</string>
   <string name="youArePlaying">أنت تلعب!</string>
   <string name="winRate">معدّل الفوز</string>
   <string name="performance">تقييم الأداء</string>

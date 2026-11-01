@@ -541,6 +541,7 @@ Prieteni jucând: %2$s</string>
   <string name="standByX">Fii pe fază, %s, jucătorii sunt cuplați, pregătește-te!</string>
   <string name="pause">Pauză</string>
   <string name="resume">Continuare</string>
+  <string name="stop">Stop</string>
   <string name="youArePlaying">Te joci!</string>
   <string name="winRate">Procent de câștig</string>
   <string name="performance">Performanță</string>

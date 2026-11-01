@@ -509,6 +509,7 @@ Oynayan arkadaşlar: %2$s</string>
   <string name="standByX">Hazır ol %s, oyuncular eşleştiriliyor!</string>
   <string name="pause">Duraklat</string>
   <string name="resume">Devam et</string>
+  <string name="stop">Durdur</string>
   <string name="youArePlaying">Şu an oyundasınız!</string>
   <string name="winRate">Kazanma oranı</string>
   <string name="performance">Performans</string>
