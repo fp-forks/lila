@@ -47,7 +47,7 @@ jobs:
           java-version: 21
           cache: sbt
       - name: Setup sbt
-        uses: sbt/setup-sbt@ecad189dd245444b9ae0a0cd5922fd938b88906f # v1.5.12
+        uses: sbt/setup-sbt@b113b960ba361e87e08ce02a390d51871b7ee459 # v1.5.13
       - run: TZ=UTC git log -1 --date=iso-strict-local --pretty='format:app.version.commit = "%H"%napp.version.date = "%ad"' | tee conf/version.conf
       - run: ./lila.sh -Depoll=true "test;stage"
       - run: cp LICENSE COPYING.md README.md target/universal/stage && git log -n 1 --pretty=oneline > target/universal/stage/commit.txt
@@ -73,7 +73,7 @@ jobs:
           java-version: 21
           cache: sbt
       - name: Setup sbt
-        uses: sbt/setup-sbt@ecad189dd245444b9ae0a0cd5922fd938b88906f # v1.5.12
+        uses: sbt/setup-sbt@b113b960ba361e87e08ce02a390d51871b7ee459 # v1.5.13
 
       - name: Check Formatting
         run: sbt scalafmtCheckAll
